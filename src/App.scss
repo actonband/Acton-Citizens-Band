@@ -1,0 +1,886 @@
+@font-face {
+  font-family: "Raleway";
+  src: url("../public/font/Raleway/Raleway-VariableFont_wght.ttf")
+    format("truetype");
+}
+
+$colour-red: #aa0000;
+$colour-brighter-red: #dd0000;
+$colour-gold: #eeaa00;
+$colour-full-white: #ffffff;
+$colour-white: #e4e4e4;
+$colour-grey: #222222;
+$colour-dark-grey: #191919;
+$colour-darker-grey: #111111;
+$colour-full-black: #000000;
+
+$img-path: "../public/img/";
+$img-path-account: "#{$img-path}Account.svg";
+$img-path-back: "#{$img-path}Back.svg";
+$img-path-calendar: "#{$img-path}Calendar.svg";
+$img-path-create-account: "#{$img-path}Create-Account.svg";
+$img-path-email: "#{$img-path}Email.svg";
+$img-path-password-reset: "#{$img-path}Password-Reset.svg";
+$img-path-google: "#{$img-path}Google.svg";
+$img-path-microsoft: "#{$img-path}Microsoft.svg";
+$img-path-facebook: "#{$img-path}Facebook.svg";
+$img-path-yahoo: "#{$img-path}Yahoo.svg";
+
+* {
+  margin: 0;
+  z-index: 0;
+}
+
+.hidden {
+  opacity: 0;
+  transition: opacity 1s ease-in-out;
+}
+
+.unhidden {
+  opacity: 1;
+  transition: opacity 2s ease-in-out;
+}
+
+html,
+body {
+  background-color: $colour-dark-grey;
+
+  .app {
+    overflow-x: hidden;
+    width: 100%;
+    min-height: 100vh;
+    text-align: center;
+    margin: 0;
+    font-family: "Helvetica Neue", "Helvetica", "Arial", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    color: $colour-white;
+
+    a {
+      text-decoration: none;
+      color: $colour-white;
+    }
+
+    p {
+      margin-block-start: 1em;
+      margin-block-end: 1em;
+    }
+
+    .header {
+      position: fixed;
+      top: auto;
+      left: 0;
+      right: 0;
+      z-index: 999;
+      width: 100%;
+      margin: 0;
+      text-align: left;
+      background-color: $colour-darker-grey;
+      border-bottom: 0.1rem solid $colour-gold;
+
+      .header-top {
+        margin-top: 1rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+
+        .header-text-container {
+          vertical-align: middle;
+          height: 100%;
+          padding-left: 2rem;
+
+          .header-text {
+            margin: 0.5rem 0;
+            display: inline-block;
+            vertical-align: middle;
+            width: 100%;
+            font-family: "Raleway", sans-serif;
+            font-size: 1.6rem;
+            color: $colour-red;
+          }
+        }
+      }
+
+      .nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.5rem 2rem;
+
+        ul {
+          display: block;
+          padding: 0;
+          padding-inline-start: 0;
+          list-style-type: none;
+          margin-block-start: 0;
+          margin-block-end: 0;
+          margin-inline-start: 0;
+          margin-inline-end: 0;
+
+          li {
+            list-style: none;
+            display: inline-block;
+            margin-right: 2rem;
+            font-size: 1.4rem;
+            text-align: right;
+            padding-bottom: 4px;
+            transition: border-color 0.5s ease;
+            border-bottom: 2px solid $colour-darker-grey;
+
+            a {
+              text-decoration: none;
+            }
+          }
+
+          li:hover,
+          li:focus,
+          li:active {
+            border-bottom: 2px solid $colour-red;
+          }
+        }
+      }
+    }
+
+    // TODO set width on main, then sections to 100%?
+    .main {
+      width: 90%;
+      max-width: 1200px;
+      display: flex;
+      flex-wrap: wrap;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      font-size: 1rem;
+      z-index: 2;
+      margin: auto;
+
+      .section {
+        flex-grow: 1;
+        box-sizing: border-box;
+        width: 100%;
+        margin: 1rem 0;
+        padding: 1rem;
+        color: $colour-darker-grey;
+        text-align: left;
+        box-shadow: 0 0 1.5rem 0.5rem $colour-full-black;
+        background-color: $colour-red;
+        max-width: 1200px;
+
+        a {
+          color: $colour-red;
+        }
+
+        .section-top {
+          width: 100%;
+          margin: 0 0 1rem 0;
+
+          img.section-image {
+            position: relative;
+            width: 100%;
+          }
+
+          .section-image-info {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            color: $colour-white;
+            justify-content: space-between;
+
+            .section-image-caption {
+              text-align: left;
+              padding: 0 2rem 0 0;
+            }
+
+            .section-image-credits {
+              text-align: right;
+            }
+          }
+
+          hr.section-image-divider {
+            margin: 0.5rem 0;
+            color: $colour-gold;
+            border-color: $colour-gold;
+            background-color: $colour-gold;
+          }
+        }
+
+        .section-bottom {
+          display: flex;
+          flex-direction: column;
+          background-color: $colour-white;
+
+          .section-content {
+            background-color: $colour-white;
+            padding: 2rem;
+
+            .section-title {
+              font-size: 1.7rem;
+              font-weight: bold;
+            }
+
+            .section-sub-title {
+              margin-top: 1rem;
+            }
+
+            .sign-in-container {
+              display: flex;
+              flex-direction: column;
+            
+              .sign-in-methods-container {
+                display: flex;
+                flex-direction: column;
+                width: 100%;
+                gap: 0.5rem;
+                text-align: center;
+                justify-content: center;
+                align-items: center;
+            
+                .email-sign-in-container {
+                  width: 15rem;
+                
+                  form {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 0.5rem;
+                    width: 100%;
+                  }
+                }
+
+                .button-container {
+                  border-top: 2px solid $colour-brighter-red;
+                  padding-top: 0.5rem;
+                }
+              }
+            
+              .sign-in-error {
+                width: 100%;
+                // height: 2.5rem;
+                max-width: 100%;
+                word-wrap: break-word;
+                overflow-wrap: break-word;
+                box-sizing: border-box;
+                text-align: center;
+                justify-content: center;
+                align-items: center;
+                margin: 0.5rem;
+              }
+            }
+
+            .bandmaster-profile-content {
+              display: flex;
+              flex-direction: column;
+
+              .bandmaster-profile-image-container {
+                width: 100%;
+                justify-content: center;
+                text-align: center;
+
+                .bandmaster-profile-image {
+                  height: 10rem;
+                  margin: 1rem 0 0 0;
+                  border: 0.2rem solid $colour-red;
+                }
+              }
+            }
+
+            .event-list {
+              .events-empty-message {
+                margin: 1rem 0;
+              }
+
+              .event {
+                margin: 1rem 0;
+                padding: 0.5rem;
+                border: 0.1rem solid $colour-red;
+
+                .event-title {
+                  font-size: 1.2rem;
+                  font-weight: bold;
+                  margin: 0.5rem;
+                }
+
+                div {
+                  margin: 0.25rem 0.75rem;
+                }
+              }
+            }
+
+            .event-links .button {
+              margin-right: 0.5rem;
+            }
+          }
+
+          .mouse-tracking-instrument-container {
+            z-index: 998;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            min-height: 20rem;
+
+            .mouse-tracking-instrument {
+              z-index: 998;
+              position: absolute;
+              height: 100%;
+              top: -10%;
+              width: 300%;
+              left: -100%;
+              opacity: 0;
+              transition: opacity 2s ease-in-out;
+  
+              &.instrument-loaded {
+                opacity: 1;
+                transition-delay: 0;
+              }
+
+              canvas {
+                z-index: 999;
+                display: block;
+                width: 100%;
+                height: 100%;
+                object-fit: contain;
+                object-position: center;
+              }
+            }
+          }
+        }
+      }
+    }
+
+    .footer {
+      width: 100%;
+      text-align: center;
+      margin-bottom: 2rem;
+
+      .footer-content {
+        width: 60%;
+        text-align: center;
+        display: inline-block;
+
+        .social-media-logo {
+          height: 4rem;
+          margin: 1rem;
+        }
+
+        .footer-text {
+          margin: 1rem;
+        }
+      }
+    }
+  }
+}
+
+.button-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 15rem;
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 0.4rem 0.7rem;
+  color: $colour-full-white;
+  background-color: $colour-brighter-red;
+  border: 2px solid $colour-brighter-red;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background-color 0.5s ease;
+
+  &:hover {
+    background-color: $colour-red;
+  }
+
+  .button-text {
+    flex-grow: 1;
+    text-align: center;
+    color: $colour-full-white;
+  }
+
+  .button-icon {
+    content: '';
+    display: inline-block;
+    width: 1.4rem;
+    height: 1.4rem;
+    background-size: cover;
+    margin-right: 0.7rem;
+  }
+
+  &.account-button .button-icon {
+    background-image: url($img-path-account);
+  }
+
+  &.back-button .button-icon {
+    background-image: url($img-path-back);
+  }
+
+  &.calendar-button .button-icon {
+    background-image: url($img-path-calendar);
+  }
+
+  &.contact-button .button-icon {
+    background-image: url($img-path-email);
+  }
+
+  &.create-account-button .button-icon {
+    background-image: url($img-path-create-account);
+  }
+
+  &.password-reset-button .button-icon {
+    background-image: url($img-path-password-reset);
+  }
+
+  &.button-google .button-icon {
+    background-image: url($img-path-google);
+  }
+  
+  &.button-microsoft .button-icon {
+    background-image: url($img-path-microsoft);
+  }
+  
+  &.button-facebook .button-icon {
+    background-image: url($img-path-facebook);
+  }
+  
+  &.button-yahoo .button-icon {
+    background-image: url($img-path-yahoo);
+  }
+}
+
+.input-text, .input-password {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 0.4rem 0.7rem;
+  border: 2px solid $colour-brighter-red;
+  border-radius: 0;
+  outline: none;
+  font-size: 1rem;
+  height: 1.4rem; // matches button height
+}
+
+@media (max-height: 500px) {
+  html,
+  body {
+    font-size: 14px;
+
+    .app {
+      .header {
+        .header-top {
+          .header-text-container {
+            .header-text {
+              font-size: 1.5rem;
+            }
+          }
+        }
+
+        .nav ul li {
+          font-size: 1rem;
+        }
+      }
+    }
+  }
+}
+
+/* Media Queries */
+@media (min-width: 320px) and (max-width: 480px) {
+  // smartphones, iPhone, portrait 480x320 phones
+  html,
+  body {
+    font-size: 14px;
+
+    .app {
+      .header {
+        .header-top {
+          .header-logo-container {
+            width: 4rem;
+            height: 4rem;
+            margin: 0 1rem;
+          }
+
+          .header-text-container {
+            .header-text {
+              font-size: 1.5rem;
+            }
+          }
+        }
+
+        .nav ul li {
+          font-size: 1.2rem;
+        }
+      }
+    }
+  }
+}
+
+@media (min-width: 481px) and (max-width: 640px) {
+  // portrait e-readers (Nook/Kindle), smaller tablets @ 600 or @ 640 wide.
+  html,
+  body {
+    font-size: 14px;
+
+    .app {
+      .header {
+        .header-top {
+          .header-logo-container {
+            width: 5rem;
+            height: 5rem;
+            margin: 0 1rem;
+          }
+
+          .header-text-container {
+            .header-text {
+              font-size: 2.5rem;
+            }
+          }
+        }
+
+        .nav ul li {
+          font-size: 1.4rem;
+        }
+      }
+    }
+  }
+}
+
+@media (min-width: 641px) and (max-width: 960px) {
+  // portrait tablets, portrait iPad, landscape e-readers, landscape 800x480 or 854x480 phones
+  html,
+  body {
+    font-size: 14px;
+
+    .app {
+      .header {
+        .header-top {
+          .header-logo-container {
+            width: 5rem;
+            height: 5rem;
+            margin: 0 2rem;
+          }
+
+          .header-text-container {
+            .header-text {
+              font-size: 3rem;
+            }
+          }
+        }
+
+        .nav ul li {
+          font-size: 1.6rem;
+        }
+      }
+
+      .main {
+        .section {
+          .section-bottom {
+            .section-content {
+              .sign-in-container {
+                .sign-in-methods-container {
+                  display: flex;
+                  flex-direction: row;
+                  align-items: flex-start;
+    
+                  .button-container {
+                    border-top: none;
+                    border-left: 2px solid $colour-brighter-red;
+                    padding-top: 0;
+                    padding-left: 0.5rem;
+                  }
+                }
+              }
+
+              .event-links {
+                display: flex;
+                flex-direction: row;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+@media (min-width: 961px) and (max-width: 1024px) {
+  // tablet, landscape iPad, lo-res laptops ands desktops
+  html,
+  body {
+    font-size: 16px;
+
+    .app {
+      .header {
+        .header-top {
+          .header-logo-container {
+            width: 6rem;
+            height: 6rem;
+            margin: 0 2rem;
+          }
+
+          .header-text-container {
+            .header-text {
+              font-size: 3rem;
+            }
+          }
+        }
+
+        .nav ul li {
+          font-size: 1.6rem;
+        }
+      }
+
+      .main {
+        .section {
+          .section-bottom {
+            flex-direction: row;
+
+            .section-content {
+              flex-grow: 1;
+              
+              .sign-in-container {
+                .sign-in-methods-container {
+                  display: flex;
+                  flex-direction: row;
+                  align-items: flex-start;
+    
+                  .button-container {
+                    border-top: none;
+                    border-left: 2px solid $colour-brighter-red;
+                    padding-top: 0;
+                    padding-left: 0.5rem;
+                  }
+                }
+              }
+              
+              .bandmaster-profile-content {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+
+                .bandmaster-profile-image-container {
+                  width: 100%;
+                  justify-content: center;
+                  text-align: center;
+
+                  .bandmaster-profile-image {
+                    height: 10rem;
+                    margin: 1rem 0 0 0;
+                    border: 0.2rem solid $colour-red;
+                  }
+                }
+
+                .bandmaster-profile-text {
+                  margin: 0 0 0 1rem;
+                }
+              }
+            }
+
+            .mouse-tracking-instrument-container {
+              flex: 0 0 20%;
+
+              .mouse-tracking-instrument {
+                top: auto;
+                height: 50%;
+                left: -110%;
+              }
+
+              .mouse-tracking-instrument.tall {
+                height: 100%;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+@media (min-width: 1025px) and (max-width: 1280px) {
+  // big landscape tablets, laptops, and desktops
+  html,
+  body {
+    font-size: 17px;
+
+    .app {
+      .header {
+        .header-top {
+          .header-logo-container {
+            width: 6rem;
+            height: 6rem;
+            margin: 0 2rem;
+          }
+
+          .header-text-container {
+            .header-text {
+              font-size: 3rem;
+            }
+          }
+        }
+
+        .nav ul li {
+          font-size: 1.6rem;
+        }
+      }
+
+      .main {
+        .section {
+          .section-bottom {
+            flex-direction: row;
+
+            .section-content {
+              flex-grow: 1;
+
+              .sign-in-container {
+                .sign-in-methods-container {
+                  display: flex;
+                  flex-direction: row;
+                  align-items: flex-start;
+    
+                  .button-container {
+                    border-top: none;
+                    border-left: 2px solid $colour-brighter-red;
+                    padding-top: 0;
+                    padding-left: 0.5rem;
+                  }
+                }
+              }
+              
+              .bandmaster-profile-content {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+
+                .bandmaster-profile-image-container {
+                  width: 100%;
+                  justify-content: center;
+                  text-align: center;
+
+                  .bandmaster-profile-image {
+                    height: 10rem;
+                    margin: 1rem 0 0 0;
+                    border: 0.2rem solid $colour-red;
+                  }
+                }
+
+                .bandmaster-profile-text {
+                  margin: 0 0 0 1rem;
+                }
+              }
+            }
+
+            .mouse-tracking-instrument-container {
+              flex: 0 0 20%;
+
+              .mouse-tracking-instrument {
+                top: auto;
+                height: 50%;
+                left: -110%;
+              }
+
+              .mouse-tracking-instrument.tall {
+                height: 100%;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+@media (min-width: 1281px) {
+  // hi-res laptops and desktops
+  html,
+  body {
+    font-size: 18px;
+
+    .app {
+      .header {
+        .header-top {
+          .header-logo-container {
+            width: 6rem;
+            height: 6rem;
+            margin: 0 2rem;
+          }
+
+          .header-text-container {
+            .header-text {
+              font-size: 3rem;
+            }
+          }
+        }
+
+        .nav ul li {
+          font-size: 1.6rem;
+        }
+      }
+
+      .main {
+        .section {
+          .section-bottom {
+            flex-direction: row;
+
+            .section-content {
+              flex-grow: 1;
+
+              .sign-in-container {
+                .sign-in-methods-container {
+                  display: flex;
+                  flex-direction: row;
+                  align-items: flex-start;
+    
+                  .button-container {
+                    border-top: none;
+                    border-left: 2px solid $colour-brighter-red;
+                    padding-top: 0;
+                    padding-left: 0.5rem;
+                  }
+                }
+              }
+
+              .bandmaster-profile-content {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+
+                .bandmaster-profile-image-container {
+                  width: 100%;
+                  justify-content: center;
+                  text-align: center;
+
+                  .bandmaster-profile-image {
+                    height: 10rem;
+                    margin: 1rem 0 0 0;
+                    border: 0.2rem solid $colour-red;
+                  }
+                }
+
+                .bandmaster-profile-text {
+                  margin: 0 0 0 1rem;
+                }
+              }
+            }
+
+            .mouse-tracking-instrument-container {
+              flex: 0 0 20%;
+
+              .mouse-tracking-instrument {
+                top: auto;
+                height: 50%;
+                left: -110%;
+              }
+
+              .mouse-tracking-instrument.tall {
+                height: 100%;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
