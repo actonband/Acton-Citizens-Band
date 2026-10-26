@@ -1,24 +1,34 @@
 import React, { useEffect, useState, useRef } from "react";
 import * as THREE from "three";
 import { DracoGLTFLoader } from "./DracoGLTFLoader";
-import { useInstrumentLoading } from './InstrumentLoadingContext';
-import { useDeviceOrientation } from './DeviceOrientationContext';
-import { getCurrentDeviceTilt } from './deviceTilt';
+import { useInstrumentLoading } from "./InstrumentLoadingContext";
+import { useDeviceOrientation } from "./DeviceOrientationContext";
+import { getCurrentDeviceTilt } from "./deviceTilt";
 
-// TODO 
-  // - All instruments are being loaded twice? Only in ev mode intentionally?
-  // - Try to determine immediately whether to load & display the instruments or not
-  // - Avoid displaying and then hiding by being sure of device/network capabilities
+function disposeModel(model: THREE.Object3D) {
+  const geometries = new Set<THREE.BufferGeometry>();
+  const materials = new Set<THREE.Material>();
+  const textures = new Set<THREE.Texture>();
+  model.traverse((object) => {
+    if (!(object instanceof THREE.Mesh)) return;
+    geometries.add(object.geometry);
+    for (const material of Array.isArray(object.material) ? object.material : [object.material]) {
+      materials.add(material);
+      for (const value of Object.values(material))
+        if (value instanceof THREE.Texture) textures.add(value);
+    }
+  });
+  textures.forEach((texture) => texture.dispose());
+  materials.forEach((material) => material.dispose());
+  geometries.forEach((geometry) => geometry.dispose());
+}
 
 type MouseTrackingInstrumentProps = {
   modelPath: string;
   tall: boolean;
-}
+};
 
-const MouseTrackingInstrument: React.FC<MouseTrackingInstrumentProps> = ({
-  modelPath,
-  tall,
-}) => {
+const MouseTrackingInstrument: React.FC<MouseTrackingInstrumentProps> = ({ modelPath, tall }) => {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const animationFrameIdRef = useRef<number | null>(null);
   const [instrumentLoaded, setInstrumentLoaded] = useState<boolean>(false);
@@ -37,11 +47,20 @@ const MouseTrackingInstrument: React.FC<MouseTrackingInstrumentProps> = ({
       75,
       container.clientWidth / container.clientHeight,
       0.1,
-      1000
+      1000,
     );
     camera.position.z = 1.25;
 
-    const renderer = new THREE.WebGLRenderer({ alpha: true });
+    let renderer: THREE.WebGLRenderer;
+    try {
+      renderer = new THREE.WebGLRenderer({ alpha: true });
+    } catch (error) {
+      console.warn("WebGL initialization failed:", error);
+      disableInstrumentLoading();
+      return;
+    }
+    setInstrumentLoaded(false);
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     renderer.domElement.style.width = "100%";
     renderer.domElement.style.height = "100%";
     container.appendChild(renderer.domElement);
@@ -62,11 +81,17 @@ const MouseTrackingInstrument: React.FC<MouseTrackingInstrumentProps> = ({
       camera.aspect = width / height;
       // Keep the enlarged model at a steady visual size without using a tall
       // canvas to determine the height of the surrounding text section.
-      const displayHeight = window.innerWidth <= 900
-        // Use more of the mobile canvas without increasing its layout height.
-        ? Math.min(560, Math.max(360, window.innerWidth * 1.4)) * 1.4 * (tall ? 1 : 0.81)
-        : Math.min(720, Math.max(480, window.innerWidth * 0.55));
-      if (width === previousWidth && height === previousHeight && displayHeight === previousDisplayHeight) return;
+      const displayHeight =
+        window.innerWidth <= 900
+          ? // Use more of the mobile canvas without increasing its layout height.
+            Math.min(560, Math.max(360, window.innerWidth * 1.4)) * 1.4 * (tall ? 1 : 0.81)
+          : Math.min(720, Math.max(480, window.innerWidth * 0.55));
+      if (
+        width === previousWidth &&
+        height === previousHeight &&
+        displayHeight === previousDisplayHeight
+      )
+        return;
       previousWidth = width;
       previousHeight = height;
       previousDisplayHeight = displayHeight;
@@ -76,6 +101,7 @@ const MouseTrackingInstrument: React.FC<MouseTrackingInstrumentProps> = ({
       renderer.setSize(width, height, false);
 
       camera.updateProjectionMatrix();
+      renderer.render(scene, camera);
     };
 
     // Run observer-triggered writes outside the ResizeObserver delivery cycle.
@@ -91,11 +117,11 @@ const MouseTrackingInstrument: React.FC<MouseTrackingInstrumentProps> = ({
 
     const handleWebGLContextLost = (event: Event) => {
       event.preventDefault();
-      console.warn('WebGL context lost detected, disabling the instruments');
+      console.warn("WebGL context lost detected, disabling the instruments");
       disableInstrumentLoading();
     };
 
-    renderer.domElement.addEventListener('webglcontextlost', handleWebGLContextLost, false);
+    renderer.domElement.addEventListener("webglcontextlost", handleWebGLContextLost, false);
 
     // Load the instrument
     let instrument: THREE.Object3D;
@@ -103,7 +129,10 @@ const MouseTrackingInstrument: React.FC<MouseTrackingInstrumentProps> = ({
     DracoGLTFLoader.load(
       modelPath,
       (gltf) => {
-        if (disposed) return;
+        if (disposed) {
+          disposeModel(gltf.scene);
+          return;
+        }
         instrument = gltf.scene;
 
         const box = new THREE.Box3().setFromObject(instrument);
@@ -113,16 +142,18 @@ const MouseTrackingInstrument: React.FC<MouseTrackingInstrumentProps> = ({
         instrument.scale.set(boxScale, boxScale, boxScale);
 
         scene.add(instrument);
+        renderer.render(scene, camera);
 
         setInstrumentLoaded(true);
 
         onResize();
       },
-      (progress) => {},
+      undefined,
       (error) => {
-        console.error("An error occurred loading " + modelPath + ":", error)
+        if (disposed) return;
+        console.error("An error occurred loading " + modelPath + ":", error);
         disableInstrumentLoading();
-      }
+      },
     );
 
     // Set up the directional lights
@@ -168,10 +199,8 @@ const MouseTrackingInstrument: React.FC<MouseTrackingInstrumentProps> = ({
       const containerRect = container.getBoundingClientRect();
 
       // Update desired target position based on mouse position, scroll position, and container's position
-      pointerTarget.x =
-        ((clientX - containerRect.left) / container.clientWidth) * 2 - 1;
-      pointerTarget.y =
-        (-(clientY - containerRect.top) / container.clientHeight) * 2 + 1;
+      pointerTarget.x = ((clientX - containerRect.left) / container.clientWidth) * 2 - 1;
+      pointerTarget.y = (-(clientY - containerRect.top) / container.clientHeight) * 2 + 1;
       pointerTarget.z = camera.position.z;
 
       // Store the last known mouse position
@@ -179,12 +208,12 @@ const MouseTrackingInstrument: React.FC<MouseTrackingInstrumentProps> = ({
     };
 
     const onMouseLeave = (event: PointerEvent) => {
-      if (event.pointerType === 'touch') return;
+      if (event.pointerType === "touch") return;
       mouseInsideWindow = false;
     };
 
     const onMouseEnter = (event: PointerEvent) => {
-      if (event.pointerType === 'touch') return;
+      if (event.pointerType === "touch") return;
       mouseInsideWindow = true;
     };
 
@@ -204,7 +233,6 @@ const MouseTrackingInstrument: React.FC<MouseTrackingInstrumentProps> = ({
     const dropThreshold = 30; // FPS threshold to consider it a "drop"
     const dropCheckPeriod = 10000; // Time period to check for drops, in milliseconds (e.g., 10 seconds)
     let dropCheckTimer = performance.now(); // Timer to reset the drop count
-    
 
     // Animate the scene
     const animate = function () {
@@ -220,13 +248,13 @@ const MouseTrackingInstrument: React.FC<MouseTrackingInstrumentProps> = ({
         // Reset the frame counter
         frames = 0;
         lastFrameTimeStamp = now;
-    
+
         // Check if FPS drops below threshold
         if (fps < dropThreshold) {
           framerateDropCount++;
         }
       }
-    
+
       // Check if it's time to evaluate framerate drops
       if (now - dropCheckTimer >= dropCheckPeriod) {
         // If drops exceed a certain number, say 3 times in the last 10 seconds
@@ -254,14 +282,28 @@ const MouseTrackingInstrument: React.FC<MouseTrackingInstrumentProps> = ({
       }
 
       renderer.render(scene, camera);
-      
-      animationFrameIdRef.current = requestAnimationFrame(animate);
+
+      if (!reducedMotion) animationFrameIdRef.current = requestAnimationFrame(animate);
     };
 
-    if (loadInstrumentsEnabled) {
-      animate();
-    }
-    
+    let visible = true;
+    const updateAnimation = () => {
+      if (animationFrameIdRef.current !== null) cancelAnimationFrame(animationFrameIdRef.current);
+      animationFrameIdRef.current = null;
+      frames = 0;
+      framerateDropCount = 0;
+      lastFrameTimeStamp = performance.now();
+      dropCheckTimer = lastFrameTimeStamp;
+      if (!disposed && visible && !document.hidden) animate();
+    };
+    const visibilityObserver = new IntersectionObserver((entries) => {
+      visible = entries.some((entry) => entry.isIntersecting);
+      updateAnimation();
+    });
+    visibilityObserver.observe(container);
+    document.addEventListener("visibilitychange", updateAnimation);
+    updateAnimation();
+
     window.addEventListener("resize", onResize);
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("pointerdown", onPointerMove, { passive: true });
@@ -272,6 +314,8 @@ const MouseTrackingInstrument: React.FC<MouseTrackingInstrumentProps> = ({
     return () => {
       disposed = true;
       resizeObserver.disconnect();
+      visibilityObserver.disconnect();
+      document.removeEventListener("visibilitychange", updateAnimation);
       if (resizeFrameId !== null) cancelAnimationFrame(resizeFrameId);
       window.removeEventListener("resize", onResize);
       window.removeEventListener("scroll", onScroll);
@@ -283,16 +327,17 @@ const MouseTrackingInstrument: React.FC<MouseTrackingInstrumentProps> = ({
       if (animationFrameIdRef.current !== null) {
         cancelAnimationFrame(animationFrameIdRef.current);
       }
-      
+
       renderer.dispose();
-      renderer.domElement.removeEventListener('webglcontextlost', handleWebGLContextLost);
+      renderer.domElement.removeEventListener("webglcontextlost", handleWebGLContextLost);
+      if (instrument) disposeModel(instrument);
       scene.clear();
 
       if (container && renderer.domElement) {
         container.removeChild(renderer.domElement);
       }
     };
-  }, [containerRef, modelPath, tall, loadInstrumentsEnabled, tilt]);
+  }, [modelPath, tall, loadInstrumentsEnabled, tilt, disableInstrumentLoading]);
 
   useEffect(() => {
     if (!loadInstrumentsEnabled && animationFrameIdRef.current !== null) {
