@@ -1,0 +1,17 @@
+<svg
+  class="svg-icon svg-icon-microsoft"
+  xmlns="http://www.w3.org/2000/svg"
+  width="21"
+  height="21"
+  viewBox="0 0 21 21"
+>
+  <title>Microsoft Logo</title>
+  <!-- <rect class="svg-icon-path-custom" x="1" y="1" width="9" height="9" fill="#f25022" />
+  <rect class="svg-icon-path-custom" x="1" y="11" width="9" height="9" fill="#00a4ef" />
+  <rect class="svg-icon-path-custom" x="11" y="1" width="9" height="9" fill="#7fba00" />
+  <rect class="svg-icon-path-custom" x="11" y="11" width="9" height="9" fill="#ffb900" /> -->
+  <rect class="svg-icon-path-fill" x="1" y="1" width="9" height="9" fill="#ffffff" />
+  <rect class="svg-icon-path-fill" x="1" y="11" width="9" height="9" fill="#ffffff" />
+  <rect class="svg-icon-path-fill" x="11" y="1" width="9" height="9" fill="#ffffff" />
+  <rect class="svg-icon-path-fill" x="11" y="11" width="9" height="9" fill="#ffffff" />
+</svg>

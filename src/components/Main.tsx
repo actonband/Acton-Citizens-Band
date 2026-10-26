@@ -3,9 +3,9 @@ import { Feature } from "../App";
 import { Routes, Route } from "react-router-dom";
 import Home from "./home/HomePage";
 import SignInForm from "./auth/SignInForm";
-import PublicPage from "./components/PublicPage";
-import Dashboard from "./components/Dashboard";
-import AdminEvents from "./components/admin/AdminEvents";
+// import PublicPage from "./components/PublicPage";
+// import Dashboard from "./components/Dashboard";
+// import AdminEvents from "./components/admin/AdminEvents";
 
 
 type MainProps = {

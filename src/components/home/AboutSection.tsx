@@ -57,7 +57,7 @@ const AboutSection: React.FC<SectionProps> = ({ ...props }) => {
         <div className="bandmaster-profile-image-container">
           <img
             className="bandmaster-profile-image"
-            src="/img/Carin-Profile.png"
+            src="/img/photos/Carin-Profile.png"
           />
         </div>
         <div className="bandmaster-profile-text">

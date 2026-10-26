@@ -1,7 +1,17 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
   <head>
     <meta charset="utf-8" />
+    <script>
+      (function () {
+        var theme = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        try {
+          var saved = localStorage.getItem('acb-theme');
+          if (saved === 'light' || saved === 'dark') theme = saved;
+        } catch (error) { /* Follow the device preference when storage is unavailable. */ }
+        document.documentElement.dataset.theme = theme;
+      })();
+    </script>
     <title>Acton Citizens' Band</title>
     <meta
       name="description"
@@ -24,7 +34,8 @@
     />
     <meta name="p:domain_verify" content="88ceabcbd512d371bb496915a57be961" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#bb0000" />
+    <meta name="theme-color" content="#cb0000" />
+    <link rel="icon" type="image/svg+xml" href="/img/branding/ACB-Brand-Mark-Red-Transparent.svg" />
     <link type="text/css" rel="stylesheet" href="https://www.gstatic.com/firebasejs/ui/4.8.0/firebase-ui-auth.css" />
 
   </head>
@@ -51,7 +62,7 @@
             <div class="section-top">
               <img
                 class="section-image"
-                src="/img/Acton-Citizens-Band-CNE-1st-Prize-1947.JPG"
+                src="/img/photos/Acton-Citizens-Band-CNE-1st-Prize-1947.JPG"
                 alt="About Us"
               />
               <div class="section-image-info">
@@ -106,7 +117,7 @@
                   <div class="bandmaster-profile-image-container">
                     <img
                       class="bandmaster-profile-image"
-                      src="/img/Carin-Profile.png"
+                      src="/img/photos/Carin-Profile.png"
                     />
                   </div>
                   <div class="bandmaster-profile-text">
@@ -130,7 +141,7 @@
             <div class="section-top">
               <img
                 class="section-image"
-                src="/img/Acton-Citizens-Band-1958.JPG"
+                src="/img/photos/Acton-Citizens-Band-1958.JPG"
                 alt="Learn With Us"
               />
               <div class="section-image-info">
@@ -183,7 +194,7 @@
             <div class="section-top">
               <img
                 class="section-image"
-                src="/img/Acton-Citizens-Band-New-Arena-Opening-1998-01.JPG"
+                src="/img/photos/Acton-Citizens-Band-New-Arena-Opening-1998-01.JPG"
                 alt="Join Us"
               />
               <div class="section-image-info">
@@ -239,7 +250,7 @@
             <div class="section-top">
               <img
                 class="section-image"
-                src="/img/Acton-Citizens-Band-1935.JPG"
+                src="/img/photos/Acton-Citizens-Band-1935.JPG"
                 alt="Upcoming Events"
               />
               <div class="section-image-info">
@@ -274,17 +285,17 @@
               <a href="https://www.facebook.com/ActonBand/" target="_BLANK"
                 ><img
                   class="social-media-logo"
-                  src="/img/Facebook.svg"
+                  src="/img/icons/Facebook.svg"
                   alt="Facebook" /></a
               ><a href="https://www.instagram.com/actonband" target="_BLANK"
                 ><img
                   class="social-media-logo"
-                  src="/img/Instagram.svg"
+                  src="/img/icons/Instagram.svg"
                   alt="Instagram" /></a
               ><a href="https://X.com/actonband" target="_BLANK"
                 ><img
                   class="social-media-logo"
-                  src="/img/X.svg"
+                  src="/img/icons/X.svg"
                   alt="X"
               /></a>
             </div>

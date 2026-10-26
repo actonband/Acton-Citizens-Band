@@ -1,5 +1,5 @@
 import React, { Suspense } from "react";
-import MouseTrackingInstrument, {
+import type {
   MouseTrackingInstrumentProps,
 } from "./instruments/MouseTrackingInstrument";
 const LazyMouseTrackingInstrument = React.lazy(() => import('./instruments/MouseTrackingInstrument'));
@@ -29,47 +29,47 @@ const Section: React.FC<SectionProps> = ({
   headerHeight,
 }) => {
   return (
-    <section
-      className={`section`}
-      style={{ scrollMarginTop: `${headerHeight ? headerHeight : 0}px` }}
-    >
+    <>
       {!image ? null : (
-        <div className="section-top">
-          <img className="section-image" src={image.path} alt={image.caption} />
-          <div className="section-image-info">
+        <figure className={`photo-break ${id === "about" ? "photo-break-opening" : ""}`}>
+          <img className="photo-break-image" src={image.path} alt={image.caption} loading={id === "about" ? "eager" : "lazy"} />
+          <figcaption className="photo-break-caption">
             {!image.caption ? null : (
-              <div className="section-image-caption">
+              <span>
                 {image.caption as string}
-              </div>
+              </span>
             )}
             {!image.credits ? null : (
-              <div className="section-image-credits">
+              <span>
                 Credits: {image.credits as string}
-              </div>
+              </span>
             )}
-          </div>
-          <hr className="section-image-divider" />
-        </div>
+          </figcaption>
+        </figure>
       )}
+    <section className={`section ${instrumentModel ? "section-with-instrument" : ""}`} aria-labelledby={`${id}-title`}>
       <div className="section-bottom">
         <div
           id={id}
           className="section-content"
-          style={{ scrollMarginTop: `${headerHeight}px` }}
+          style={{ scrollMarginTop: `${headerHeight ?? 0}px` }}
         >
-          <h2 className="section-title">{title}</h2>
+          <h2 id={`${id}-title`} className="section-title">{title}</h2>
           {!content ? null : content}
         </div>
         {!instrumentModel ? null : (
-            <Suspense fallback={<div className={`mouse-tracking-instrument-container`}></div>}>
+          <div className="instrument-stage" aria-hidden="true">
+            <Suspense fallback={null}>
               <LazyMouseTrackingInstrument
                 modelPath={instrumentModel.modelPath}
                 tall={instrumentModel.tall}
               />
             </Suspense>
+          </div>
         )}
       </div>
     </section>
+    </>
   );
 };
 
