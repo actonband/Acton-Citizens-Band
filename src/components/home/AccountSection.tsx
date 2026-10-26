@@ -1,6 +1,6 @@
 import React from "react";
 import Section, { SectionProps } from "../Section";
-import LoginForm from "../auth/LoginForm";
+import SignInForm from "../auth/SignInForm";
 import { useAuth } from "../auth/AuthContext";
 
 // TODO
@@ -19,7 +19,7 @@ const AccountSection: React.FC<SectionProps> = ({ ...props }) => {
     <Section
       id={props.id}
       title={user && user.displayName ? "Welcome, " + user.displayName : "Account"}
-      content={<LoginForm />}
+      content={<SignInForm />}
       image={props.image}
       headerHeight={props.headerHeight}/>
   );
