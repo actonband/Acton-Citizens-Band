@@ -1,11 +1,8 @@
 import React from "react";
 import Section, { SectionProps } from "../Section";
-import GoogleAnalyticsLink from "../../utils/GoogleAnalyticsLink";
 
 const HistorySection: React.FC<SectionProps> = ({ ...props }) => {
-  const content = 
-    <>
-    </>
+  const content = <></>;
 
   return (
     <Section
