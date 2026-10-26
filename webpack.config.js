@@ -24,7 +24,14 @@ module.exports = {
       },
       {
         test: /\.s[ac]ss$/i,
-        use: [MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader'],
+        use: [
+          MiniCssExtractPlugin.loader,
+          'css-loader',
+          {
+            loader: 'sass-loader',
+            options: { api: 'modern' },
+          },
+        ],
       },
       {
         test: /\.(png|jpe?g|gif|svg|eot|ttf|woff|woff2)$/i,
@@ -47,12 +54,12 @@ module.exports = {
           from: 'public',
           to: '.',
           globOptions: {
-            ignore: ['**/index.html', '**/*bkp*', '**/.DS_Store'],
+            ignore: ['**/index.html', '**/*bkp*', '**/.DS_Store', '**/AGENTS.md'],
           },
         },
       ],
     }),
-    new Dotenv(),
+    new Dotenv({ systemvars: true }),
   ],
   devServer: {
     static: path.join(__dirname, 'public'),

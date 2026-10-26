@@ -19,6 +19,9 @@
 .env.development.local
 .env.test.local
 .env.production.local
+.env.*
+!.env.example
+.firebase/
 
 npm-debug.log*
 yarn-debug.log*
@@ -26,3 +29,12 @@ yarn-error.log*
 
 *bkp*
 *manifest.json*
+
+# debug
+/html
+
+# Local agent instructions and review tracking
+/AGENTS.md
+
+# Firebase CLI diagnostic logs
+firebase-debug*.log
