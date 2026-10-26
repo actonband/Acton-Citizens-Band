@@ -6,6 +6,7 @@ import JoinSection from "./JoinSection";
 import EventsSection from "./EventsSection";
 import HistorySection from "./HistorySection";
 import AccountSection from "./AccountSection";
+import { isAccountEnabled } from "../../utils/features";
 
 type MainProps = {
   headerHeight: number,
@@ -95,9 +96,8 @@ const HomePage: React.FC<MainProps> = ({ headerHeight, features }) => {
           />
         )
       }
-      {/* { features.some(f => f.name === 'account' 
-          && f.enabled === true) && */}( 
-          <AccountSection
+      {isAccountEnabled(features) && (
+<AccountSection
             key="account"
             id="account"
             navItem="Account"
@@ -105,7 +105,7 @@ const HomePage: React.FC<MainProps> = ({ headerHeight, features }) => {
             headerHeight={headerHeight}
           />
         )
-      {/* } */}
+      }
     </main>
   );
 };

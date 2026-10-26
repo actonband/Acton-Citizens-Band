@@ -4,6 +4,7 @@ import { InstrumentLoadingProvider } from './components/instruments/InstrumentLo
 import { DeviceOrientationProvider } from './components/instruments/DeviceOrientationContext';
 import Main from "./components/Main";
 import { AuthProvider, useAuth } from "./components/auth/AuthContext";
+import { isAccountEnabled } from "./utils/features";
 import googleAnalytics from "./utils/GoogleAnalytics";
 import { firestore } from "./utils/Firebase";
 import { collection,getDocs, query } from "firebase/firestore"; 
@@ -105,8 +106,7 @@ const Nav: React.FC<{ features: Feature[] }> = ({ features }) => {
             </li>
           )
         }
-        { features.some(f => f.name === 'account' 
-            && f.enabled === true) && (
+        { isAccountEnabled(features) && (
             <li className="nav-list-item" key="account">
               <a href="#account">Account</a>
             </li>
