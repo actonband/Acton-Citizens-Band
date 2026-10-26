@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Section, { SectionProps } from "../Section";
 import GoogleAnalyticsLink from "../../utils/GoogleAnalyticsLink";
+import CalendarSubscription from "./CalendarSubscription";
 import { firestore } from "../../utils/Firebase";
 import {
   collection,
@@ -132,6 +133,7 @@ const EventsSection: React.FC<SectionProps> = ({ ...props }) => {
                 {event.links.map((link) =>
                   !link.text || !link.url ? null : (
                     <GoogleAnalyticsLink 
+                      key={"event_" + event.id + "_link_" + link.text.toLowerCase().replace(/[^a-z0-9]/gmi, " ").replace(/\s+/g, "_")}
                       eventName="Event_Link_Click"
                       eventCategory="Link"
                       eventLabel="Event_Link"
@@ -161,28 +163,19 @@ const EventsSection: React.FC<SectionProps> = ({ ...props }) => {
       content={
         <>
           {eventElements}
-          <div className="event-links">
-            <div className="button-container">
-              <GoogleAnalyticsLink 
-                eventName="Events_Section_iCal_Link_Click"
-                eventCategory="Link"
-                eventLabel="Events_Section_iCal_Link"
-                className="button calendar-button"
-                href="webcal://actoncitizensband.ca/iCal" // redirected by CloudFlare Page Rule
-              >
-                <span className="button-icon"></span>
-                <span className="button-text">Add to your Calendar</span> 
-              </GoogleAnalyticsLink>
-              <GoogleAnalyticsLink 
+          <div className="event-calendar-actions">
+              <CalendarSubscription />
+              <GoogleAnalyticsLink
                 eventName="Events_Section_Google_Calendar_Link_Click"
                 eventCategory="Link"
                 eventLabel="Events_Section_Google_Calendar_Link"
                 className="button button-google"
-                target="_BLANK"
-                href="https://actoncitizensband.ca/calendar" // redirected by CloudFlare Page Rule
+                target="_blank"
+                rel="noopener noreferrer"
+                href="https://actoncitizensband.ca/calendar"
               >
-                <span className="button-icon"></span>
-                <span className="button-text">View Google Calendar</span> 
+                <span className="button-icon" aria-hidden="true"></span>
+                <span className="button-text">View Google Calendar</span>
               </GoogleAnalyticsLink>
               <GoogleAnalyticsLink 
                 eventName="Events_Section_Facebook_Events_Link_Click"
@@ -195,7 +188,6 @@ const EventsSection: React.FC<SectionProps> = ({ ...props }) => {
                 <span className="button-icon"></span>
                 <span className="button-text">View Facebook Events</span> 
               </GoogleAnalyticsLink>
-            </div>
           </div>
         </>
       }
