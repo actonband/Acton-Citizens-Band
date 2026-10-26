@@ -2,6 +2,8 @@ import React, { useEffect, useState, useRef } from "react";
 import * as THREE from "three";
 import { DracoGLTFLoader } from "./DracoGLTFLoader";
 import { useInstrumentLoading } from './InstrumentLoadingContext';
+import { useDeviceOrientation } from './DeviceOrientationContext';
+import { getCurrentDeviceTilt } from './deviceTilt';
 
 // TODO 
   // - All instruments are being loaded twice? Only in ev mode intentionally?
@@ -21,6 +23,7 @@ const MouseTrackingInstrument: React.FC<MouseTrackingInstrumentProps> = ({
   const animationFrameIdRef = useRef<number | null>(null);
   const [instrumentLoaded, setInstrumentLoaded] = useState<boolean>(false);
   const { loadInstrumentsEnabled, disableInstrumentLoading } = useInstrumentLoading();
+  const { tilt } = useDeviceOrientation();
 
   useEffect(() => {
     if (!containerRef.current || !loadInstrumentsEnabled) {
@@ -36,25 +39,55 @@ const MouseTrackingInstrument: React.FC<MouseTrackingInstrumentProps> = ({
       0.1,
       1000
     );
-    camera.position.z = 1;
+    camera.position.z = 1.25;
 
     const renderer = new THREE.WebGLRenderer({ alpha: true });
-    renderer.setSize(container.clientWidth, container.clientHeight);
+    renderer.domElement.style.width = "100%";
+    renderer.domElement.style.height = "100%";
     container.appendChild(renderer.domElement);
 
-    // Handle window resizing
-    const onResize = () => {
-      // Update size of renderer
-      camera.aspect = container.clientWidth / container.clientHeight;
-      renderer.setSize(container.clientWidth, container.clientHeight);
+    let disposed = false;
+    let resizeFrameId: number | null = null;
+    let previousWidth = 0;
+    let previousHeight = 0;
+    let previousDisplayHeight = 0;
 
-      renderer.domElement.style.width = "100%";
-      renderer.domElement.style.height = "100%";
+    const resizeRenderer = () => {
+      resizeFrameId = null;
+      if (disposed) return;
+      const width = container.clientWidth;
+      const height = container.clientHeight;
+      if (!width || !height) return;
+      // Update size of renderer
+      camera.aspect = width / height;
+      // Keep the enlarged model at a steady visual size without using a tall
+      // canvas to determine the height of the surrounding text section.
+      const displayHeight = window.innerWidth <= 900
+        // Use more of the mobile canvas without increasing its layout height.
+        ? Math.min(560, Math.max(360, window.innerWidth * 1.4)) * 1.4 * (tall ? 1 : 0.81)
+        : Math.min(720, Math.max(480, window.innerWidth * 0.55));
+      if (width === previousWidth && height === previousHeight && displayHeight === previousDisplayHeight) return;
+      previousWidth = width;
+      previousHeight = height;
+      previousDisplayHeight = displayHeight;
+
+      camera.zoom = displayHeight / height;
+      // Resize the drawing buffer only; CSS owns the canvas layout dimensions.
+      renderer.setSize(width, height, false);
 
       camera.updateProjectionMatrix();
     };
 
-    onResize();
+    // Run observer-triggered writes outside the ResizeObserver delivery cycle.
+    const onResize = () => {
+      if (!disposed && resizeFrameId === null) {
+        resizeFrameId = requestAnimationFrame(resizeRenderer);
+      }
+    };
+
+    resizeRenderer();
+    const resizeObserver = new ResizeObserver(onResize);
+    resizeObserver.observe(container);
 
     const handleWebGLContextLost = (event: Event) => {
       event.preventDefault();
@@ -70,6 +103,7 @@ const MouseTrackingInstrument: React.FC<MouseTrackingInstrumentProps> = ({
     DracoGLTFLoader.load(
       modelPath,
       (gltf) => {
+        if (disposed) return;
         instrument = gltf.scene;
 
         const box = new THREE.Box3().setFromObject(instrument);
@@ -79,8 +113,6 @@ const MouseTrackingInstrument: React.FC<MouseTrackingInstrumentProps> = ({
         instrument.scale.set(boxScale, boxScale, boxScale);
 
         scene.add(instrument);
-
-        animate();
 
         setInstrumentLoaded(true);
 
@@ -124,80 +156,46 @@ const MouseTrackingInstrument: React.FC<MouseTrackingInstrumentProps> = ({
     let mouseInsideWindow = true;
 
     const desiredTarget = new THREE.Vector3(0, 0, camera.position.z);
+    const pointerTarget = new THREE.Vector3(0, 0, camera.position.z);
     const currentTarget = new THREE.Vector3(0, 0, camera.position.z);
     let lastMousePosition = {
-      clientX: 0,
-      clientY: 0,
+      clientX: window.innerWidth / 2,
+      clientY: window.innerHeight / 2,
     };
     const lerpFactor = 0.05;
 
-    const updateInstrumentRotation = (event: MouseEvent | TouchEvent | Event) => {
-      let clientX: number, clientY: number;
-
-      if (event instanceof MouseEvent) {
-        clientX = event.clientX;
-        clientY = event.clientY;
-      } else if (event instanceof TouchEvent && event.touches.length > 0) {
-        clientX = event.touches[0].clientX;
-        clientY = event.touches[0].clientY;
-      } else {
-        // Use the last known mouse position if the event is not recognized
-        // This branch might not be needed, but it's here for completeness
-        clientX = lastMousePosition.clientX;
-        clientY = lastMousePosition.clientY;
-      }
-
+    const updateMouseTarget = ({ clientX, clientY }: { clientX: number; clientY: number }) => {
       const containerRect = container.getBoundingClientRect();
 
       // Update desired target position based on mouse position, scroll position, and container's position
-      desiredTarget.x =
+      pointerTarget.x =
         ((clientX - containerRect.left) / container.clientWidth) * 2 - 1;
-      desiredTarget.y =
+      pointerTarget.y =
         (-(clientY - containerRect.top) / container.clientHeight) * 2 + 1;
-      desiredTarget.z = camera.position.z;
+      pointerTarget.z = camera.position.z;
 
       // Store the last known mouse position
       lastMousePosition = { clientX, clientY };
     };
 
-    const onMouseLeave = () => {
+    const onMouseLeave = (event: PointerEvent) => {
+      if (event.pointerType === 'touch') return;
       mouseInsideWindow = false;
     };
 
-    const onMouseEnter = () => {
+    const onMouseEnter = (event: PointerEvent) => {
+      if (event.pointerType === 'touch') return;
       mouseInsideWindow = true;
     };
 
-    const handleTouch = (event: TouchEvent) => {
-
-      const canvasBoundingRect = renderer.domElement.getBoundingClientRect();
-
-      // Canvas width is set to 300% width in CSS
-      const actualCanvasWidth = canvasBoundingRect.width / 3;
-      const actualCanvasLeft = canvasBoundingRect.left + (actualCanvasWidth);
-      const actualCanvasRight = canvasBoundingRect.right - (actualCanvasWidth);
-
-      // Avoid unintentional touches by reducing the touch area by 1/5
-      const fifthWidth = actualCanvasWidth / 5;
-      const fifthHeight = canvasBoundingRect.height / 5;
-      const adjustedCanvasLeft = actualCanvasLeft + fifthWidth;
-      const adjustedCanvasRight = actualCanvasRight - fifthWidth;
-      const adjustedCanvasTop = canvasBoundingRect.top + fifthHeight;
-      const adjustedCanvasBottom = canvasBoundingRect.bottom - fifthHeight;
-
-      const touch = event.touches[0];
-
-      if (touch.clientX >= adjustedCanvasLeft &&
-          touch.clientX <= adjustedCanvasRight  &&
-          touch.clientY >= adjustedCanvasTop  &&
-          touch.clientY <= adjustedCanvasBottom) {
-        
-        // Touch started inside the component
-        updateInstrumentRotation(event);
-        // Prevent scrolling and zooming
-        event.preventDefault(); 
-      }
-    }
+    const onPointerMove = (event: PointerEvent) => {
+      // Touch supplies a fallback position without cancelling native scrolling.
+      mouseInsideWindow = true;
+      updateMouseTarget(event);
+    };
+    const onScroll = () => {
+      updateMouseTarget(lastMousePosition);
+    };
 
     let frames = 0;
     let lastFrameTimeStamp = performance.now();
@@ -210,11 +208,7 @@ const MouseTrackingInstrument: React.FC<MouseTrackingInstrumentProps> = ({
 
     // Animate the scene
     const animate = function () {
-
-      if (!loadInstrumentsEnabled) {
-        renderer.clear();
-        return;
-      }
+      if (disposed) return;
 
       const now = performance.now();
       const delta = now - lastFrameTimeStamp;
@@ -244,15 +238,15 @@ const MouseTrackingInstrument: React.FC<MouseTrackingInstrumentProps> = ({
         dropCheckTimer = now;
       }
 
-      // Smoothly update the current target position based on the desired target position when the mouse is inside the window
-      if (mouseInsideWindow) {
-        currentTarget.lerp(desiredTarget, lerpFactor);
+      const currentTilt = getCurrentDeviceTilt(tilt.current, now);
+      if (currentTilt) {
+        desiredTarget.set(currentTilt.x * 0.8, currentTilt.y * 0.8, camera.position.z);
+      } else if (mouseInsideWindow) {
+        desiredTarget.copy(pointerTarget);
       } else {
-        currentTarget.lerp(
-          currentTarget.clone().set(0, 0, camera.position.z),
-          lerpFactor
-        );
+        desiredTarget.set(0, 0, camera.position.z);
       }
+      currentTarget.lerp(desiredTarget, lerpFactor);
 
       // Make the instrument look at the current target position
       if (instrument) {
@@ -269,34 +263,36 @@ const MouseTrackingInstrument: React.FC<MouseTrackingInstrumentProps> = ({
     }
     
     window.addEventListener("resize", onResize);
-    window.addEventListener("scroll", updateInstrumentRotation);
-    window.addEventListener("touchstart", handleTouch, {passive: false});
-    window.addEventListener("touchmove", handleTouch);
-    window.addEventListener("mousemove", updateInstrumentRotation);
-    window.addEventListener("mouseleave", onMouseLeave);
-    window.addEventListener("mouseenter", onMouseEnter);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("pointerdown", onPointerMove, { passive: true });
+    window.addEventListener("pointermove", onPointerMove, { passive: true });
+    window.addEventListener("pointerleave", onMouseLeave, { passive: true });
+    window.addEventListener("pointerenter", onMouseEnter, { passive: true });
 
     return () => {
+      disposed = true;
+      resizeObserver.disconnect();
+      if (resizeFrameId !== null) cancelAnimationFrame(resizeFrameId);
       window.removeEventListener("resize", onResize);
-      window.removeEventListener("scroll", updateInstrumentRotation);
-      window.removeEventListener("touchstart", handleTouch);
-      window.removeEventListener("touchmove", handleTouch);
-      window.removeEventListener("mousemove", updateInstrumentRotation);
-      window.removeEventListener("mouseleave", onMouseLeave);
-      window.removeEventListener("mouseenter", onMouseEnter);
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("pointerdown", onPointerMove);
+      window.removeEventListener("pointermove", onPointerMove);
+      window.removeEventListener("pointerleave", onMouseLeave);
+      window.removeEventListener("pointerenter", onMouseEnter);
 
       if (animationFrameIdRef.current !== null) {
         cancelAnimationFrame(animationFrameIdRef.current);
       }
       
       renderer.dispose();
+      renderer.domElement.removeEventListener('webglcontextlost', handleWebGLContextLost);
       scene.clear();
 
       if (container && renderer.domElement) {
         container.removeChild(renderer.domElement);
       }
     };
-  }, [containerRef, modelPath, loadInstrumentsEnabled]);
+  }, [containerRef, modelPath, tall, loadInstrumentsEnabled, tilt]);
 
   useEffect(() => {
     if (!loadInstrumentsEnabled && animationFrameIdRef.current !== null) {

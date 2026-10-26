@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./App.scss";
 import { InstrumentLoadingProvider } from './components/instruments/InstrumentLoadingContext';
+import { DeviceOrientationProvider } from './components/instruments/DeviceOrientationContext';
 import Main from "./components/Main";
 import { AuthProvider, useAuth } from "./components/auth/AuthContext";
 import googleAnalytics from "./utils/GoogleAnalytics";
@@ -56,11 +57,13 @@ const App: React.FC = () => {
   return (
     <AuthProvider>
       <InstrumentLoadingProvider>
+        <DeviceOrientationProvider>
         <div id="app" className="app">
           <Header features={features}/>
           <Main headerHeight={headerHeight} features={features} />
           <Footer features={features}/>
         </div>
+        </DeviceOrientationProvider>
       </InstrumentLoadingProvider>
     </AuthProvider>
   );

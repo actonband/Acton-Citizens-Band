@@ -1,3 +1,4 @@
+import { readStorage, writeStorage } from '../../utils/storage';
 import React, { createContext, useContext, useState, useEffect, ReactNode, useMemo } from 'react';
 
 const InstrumentLoadingContext = createContext<{
@@ -34,24 +35,15 @@ export const InstrumentLoadingProvider: React.FC<InstrumentLoadingProviderProps>
     const [loadInstrumentsEnabled, setLoadInstrumentsEnabled] = useState(true);
 
     useEffect(() => {
-        let loadEnabled = true;
-        try {
-            loadEnabled = sessionStorage.getItem('loadInstrumentsEnabled') !== 'false';
-        } catch (error) {
-            console.warn('Session storage is not accessible:', error);
-        }
-
-        setLoadInstrumentsEnabled(loadEnabled && shouldEnableInstruments());
-        sessionStorage.setItem('loadInstrumentsEnabled', loadInstrumentsEnabled ? 'true' : 'false');
+        const loadEnabled = readStorage(() => window.sessionStorage, 'loadInstrumentsEnabled') !== 'false'
+            && shouldEnableInstruments();
+        setLoadInstrumentsEnabled(loadEnabled);
+        writeStorage(() => window.sessionStorage, 'loadInstrumentsEnabled', String(loadEnabled));
     }, []);
 
     const disableInstrumentLoading = () => {
         setLoadInstrumentsEnabled(false);
-        try {
-            sessionStorage.setItem('loadInstrumentsEnabled', 'false');
-        } catch (error) {
-            console.warn('Failed to save state to session storage:', error);
-        }
+        writeStorage(() => window.sessionStorage, 'loadInstrumentsEnabled', 'false');
     };
 
     const providerValue = useMemo(() => ({ loadInstrumentsEnabled, disableInstrumentLoading }), [loadInstrumentsEnabled]);

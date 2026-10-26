@@ -1,5 +1,5 @@
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
-import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
 
 const dracoLoader = new DRACOLoader();
 dracoLoader.setDecoderPath(process.env.REACT_APP_DRACO_DECODER_URI as string);
