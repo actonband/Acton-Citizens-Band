@@ -24,7 +24,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version: "22"
           cache: npm
       - name: Validate Firebase configuration
         shell: bash
@@ -36,6 +36,7 @@ jobs:
           if (process.env.FIREBASE_PROJECT_ID !== 'acton-citizens-band') throw new Error('FIREBASE_PROJECT_ID must be acton-citizens-band');
           NODE
       - run: npm ci
+      - run: npm run format:check
       - run: npm test
       - run: npm run typecheck
       - run: npm run build

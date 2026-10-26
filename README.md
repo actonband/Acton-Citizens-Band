@@ -22,18 +22,18 @@ and Google Analytics.
 
 Clone the repository and install dependencies:
 
-~~~sh
+```sh
 git clone https://github.com/actonband/Acton-Citizens-Band.git
 cd Acton-Citizens-Band
 npm ci
-~~~
+```
 
 Copy .env.example to .env, then replace the placeholders with the Firebase web
 app configuration. In PowerShell:
 
-~~~powershell
+```powershell
 Copy-Item .env.example .env
-~~~
+```
 
 The configured Firebase project is acton-citizens-band. Environment values used
 by the application are embedded at build time. Keep service-account credentials
@@ -41,47 +41,50 @@ out of .env and application code. The .env file is ignored by Git.
 
 Start the development server:
 
-~~~sh
+```sh
 npm run startDev
-~~~
+```
 
 Webpack opens http://localhost:3000. Restart the server after changing .env.
 On Windows, if PowerShell blocks npm.ps1, use npm.cmd instead of npm.
 
 ## Commands
 
-| Command | Purpose |
-| --- | --- |
-| npm run startDev | Start the development server and open the browser |
-| npm start | Start Webpack's server in production mode; does not deploy |
-| npm run buildDev | Write a development build to build/ |
-| npm run build | Write a production build to build/ |
-| npm test | Run the Node test suite in tests/ |
-| npm run typecheck | Check application TypeScript without emitting files |
-| npm audit | Check dependency advisories, including development tools |
+| Command              | Purpose                                                      |
+| -------------------- | ------------------------------------------------------------ |
+| npm run startDev     | Start the development server and open the browser            |
+| npm start            | Start Webpack's server in production mode; does not deploy   |
+| npm run buildDev     | Write a development build to build/                          |
+| npm run build        | Write a production build to build/                           |
+| npm test             | Run the Node test suite in tests/                            |
+| npm run typecheck    | Check application and test TypeScript without emitting files |
+| npm run format       | Format source, configuration, and documentation              |
+| npm run format:check | Check formatting without changing files                      |
+| npm run check        | Run formatting, TypeScript, and tests                        |
+| npm audit            | Check dependency advisories, including development tools     |
 
-The application typecheck covers src/ and global.d.ts; it does not currently
-provide a separate test-file typecheck. Tests run separately through npm test.
-Test files are outside the application entry graph and are not copied into the
-production output.
+Application and test files have separate TypeScript configurations. Application code
+uses explicit browser/build-time declarations, while tests use Node types. Tests
+run through Node's built-in test runner. Test files are outside the application
+entry graph and are not copied into the production output.
 
 ## Environment configuration
 
 Use .env.example as the complete list of supported variables:
 
-| Variable | Purpose |
-| --- | --- |
-| FIREBASE_API_KEY | Firebase web API key |
-| FIREBASE_AUTH_DOMAIN | Firebase Authentication domain |
-| FIREBASE_PROJECT_ID | Firebase project ID; acton-citizens-band |
-| FIREBASE_APP_ID | Firebase web application ID |
-| FIREBASE_DATABASE_URL | Database URL from the Firebase configuration |
-| FIREBASE_STORAGE_BUCKET | Storage bucket from the Firebase configuration |
-| FIREBASE_MESSAGING_SENDER_ID | Messaging sender ID |
-| FIREBASE_MEASUREMENT_ID | Firebase measurement ID |
+| Variable                               | Purpose                                            |
+| -------------------------------------- | -------------------------------------------------- |
+| FIREBASE_API_KEY                       | Firebase web API key                               |
+| FIREBASE_AUTH_DOMAIN                   | Firebase Authentication domain                     |
+| FIREBASE_PROJECT_ID                    | Firebase project ID; acton-citizens-band           |
+| FIREBASE_APP_ID                        | Firebase web application ID                        |
+| FIREBASE_DATABASE_URL                  | Database URL from the Firebase configuration       |
+| FIREBASE_STORAGE_BUCKET                | Storage bucket from the Firebase configuration     |
+| FIREBASE_MESSAGING_SENDER_ID           | Messaging sender ID                                |
+| FIREBASE_MEASUREMENT_ID                | Firebase measurement ID                            |
 | REACT_APP_GOOGLE_ANALYTICS_TRACKING_ID | Analytics tracking ID; omit to skip initialization |
-| REACT_APP_DRACO_DECODER_URI | Public URL of the Draco decoder used by 3D models |
-| REACT_APP_ACCOUNT_OVERRIDE | Development-only override for account visibility |
+| REACT_APP_DRACO_DECODER_URI            | Public URL of the Draco decoder used by 3D models  |
+| REACT_APP_ACCOUNT_OVERRIDE             | Development-only override for account visibility   |
 
 Webpack reads .env locally and also accepts system environment variables. System
 variables take precedence. No runtime environment is read from Firebase Hosting;
@@ -96,15 +99,15 @@ missing or unavailable flag leaves accounts hidden.
 
 For development, set this in .env:
 
-~~~dotenv
+```dotenv
 REACT_APP_ACCOUNT_OVERRIDE=true
-~~~
+```
 
-| Development override | Account visibility |
-| --- | --- |
-| true | Show accounts regardless of the Firestore flag |
-| false | Hide accounts regardless of the Firestore flag |
-| Blank | Follow Firestore |
+| Development override | Account visibility                             |
+| -------------------- | ---------------------------------------------- |
+| true                 | Show accounts regardless of the Firestore flag |
+| false                | Hide accounts regardless of the Firestore flag |
+| Blank                | Follow Firestore                               |
 
 The override only applies to npm run startDev and development builds. Production
 builds, including npm start, always follow Firestore. It changes UI visibility;
@@ -118,19 +121,19 @@ from the events collection. Event member notes are intentionally public.
 
 Before deployment:
 
-~~~sh
-npm ci && npm test && npm run typecheck && npm run build
-~~~
+```sh
+npm ci && npm run check && npm run build
+```
 
 In Windows PowerShell 5, run each command separately and continue only after it
 succeeds; that shell does not support &&. Use npm.cmd if script execution is blocked.
 
 Deploy the built site to Firebase Hosting:
 
-~~~powershell
+```powershell
 firebase.cmd login
 firebase.cmd deploy --only hosting --project acton-citizens-band
-~~~
+```
 
 On other shells, use firebase instead of firebase.cmd. Hosting serves build/;
 the --only hosting option limits this command to website deployment. Building
@@ -145,7 +148,8 @@ The repository contains these workflows:
 - .github/workflows/firebase-hosting-pull-request.yml: build/check and preview
   deployment for pull requests from this repository.
 
-Both run npm ci, npm test, npm run typecheck, and npm run build before deployment.
+Both install dependencies, check formatting, run tests and TypeScript checks, then
+build before deployment.
 They currently reference the GitHub Actions secret
 FIREBASE_SERVICE_ACCOUNT_ACTON_CITIZENS_BAND. This is the service-account JSON
 credential created by Firebase's GitHub setup, and must have access to the
@@ -169,7 +173,7 @@ See [deployment notes](docs/deployment.md) for additional configuration details.
 
 ## Project layout
 
-~~~text
+```text
 src/
   App.tsx                    Application shell, navigation, theme, feature loading
   App.scss                   Application styles
@@ -182,11 +186,23 @@ public/                      Static HTML, images, fonts, and 3D models
 tests/                      Node tests (calendar, tilt, flags, email, storage)
 .github/workflows/           Firebase Hosting deployment workflows
 build/                       Generated production/development output; Git-ignored
-~~~
+```
 
 ## Content and assets
 
 Most band information is maintained in src/components/home/. Events and feature
-flags are maintained in Firestore. Static assets live in public/ and are copied
+flags are maintained in Firestore. Event times are displayed in America/Toronto. Static assets live in public/ and are copied
 to the build. Preserve model and asset attribution when replacing content; the
 site footer contains the existing trumpet model credit.
+
+## Code conventions
+
+React components use PascalCase filenames; utility modules and tests use camelCase.
+Use .tsx for JSX and .ts for non-JSX code when adding files. Existing filenames
+are preserved. Prettier and .editorconfig define formatting. Keep imports matched
+to filename casing for Linux CI. The Webpack configuration uses .cjs because it
+loads plugins with CommonJS; application source uses ES modules.
+
+Production builds clean build/ and use content hashes for JavaScript and CSS.
+Do not edit generated files. No open-source license is currently declared; asset
+attributions do not grant a blanket license to this repository.

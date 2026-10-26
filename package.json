@@ -4,15 +4,11 @@
   "author": "Brian Morris",
   "private": true,
   "dependencies": {
-    "@testing-library/jest-dom": "^5.16.5",
-    "@testing-library/react": "^13.4.0",
-    "@testing-library/user-event": "^13.5.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-ga4": "^2.1.0",
-    "react-router-dom": "^6.28.0",
-    "uuid": "^9.0.1",
-    "web-vitals": "^2.1.4"
+    "firebase": "^9.22.1",
+    "three": "^0.151.3"
   },
   "scripts": {
     "startDev": "webpack serve --mode development --open",
@@ -20,13 +16,10 @@
     "buildDev": "webpack --mode development",
     "build": "webpack --mode production",
     "test": "node --experimental-strip-types --test tests/*.test.mts",
-    "typecheck": "tsc --noEmit"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
+    "typecheck": "tsc --noEmit && tsc --project tests/tsconfig.json",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "check": "npm run format:check && npm run typecheck && npm test"
   },
   "browserslist": {
     "production": [
@@ -41,27 +34,32 @@
     ]
   },
   "devDependencies": {
-    "@types/lodash": "^4.14.194",
+    "@types/node": "^22.20.5",
+    "@types/react": "^18.3.31",
+    "@types/react-dom": "^18.3.7",
     "@types/three": "^0.150.2",
-    "@types/uuid": "^9.0.8",
-    "autoprefixer": "^10.4.14",
-    "clean-webpack-plugin": "^4.0.0",
     "copy-webpack-plugin": "^11.0.0",
     "css-loader": "^6.7.3",
     "dotenv-webpack": "^8.0.1",
-    "file-loader": "^6.2.0",
-    "firebase": "^9.22.1",
     "html-webpack-plugin": "^5.5.1",
     "mini-css-extract-plugin": "^2.7.5",
-    "postcss-loader": "^7.2.4",
-    "react-three-fiber": "^6.0.13",
+    "prettier": "^3.9.10",
     "sass": "^1.62.1",
     "sass-loader": "^13.2.2",
-    "three": "^0.151.3",
     "ts-loader": "^9.4.2",
     "typescript": "^5.9.3",
     "webpack": "^5.81.0",
     "webpack-cli": "^5.0.2",
     "webpack-dev-server": "^4.13.3"
-  }
+  },
+  "description": "Community website for the Acton Citizens' Band in Acton, Ontario.",
+  "homepage": "https://actoncitizensband.ca",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/actonband/Acton-Citizens-Band.git"
+  },
+  "engines": {
+    "node": ">=22.14.0 <23"
+  },
+  "type": "module"
 }

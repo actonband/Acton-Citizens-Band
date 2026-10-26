@@ -26,7 +26,7 @@ Keep FIREBASE_SERVICE_ACCOUNT_ACTON_CITIZENS_BAND as a GitHub Actions SECRET. Th
 referenced by both workflows, matching the secret reported by the repository owner. The credential must have deployment access to
 acton-citizens-band. Do not put this credential in public variables or .env.
 
-Both workflows run npm ci, npm test, npm run typecheck, and npm run build
+Both workflows run npm ci, npm run format:check, npm test, npm run typecheck, and npm run build
 before deployment. Node 22 and repository-variable mappings are configured. Main-branch pushes deploy live; same-repository PRs deploy
 preview channels. Fork PRs do not receive deployment credentials. This change
 does not itself push or deploy anything.
