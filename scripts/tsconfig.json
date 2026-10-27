@@ -1,0 +1,9 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "types": ["node", "react", "react-dom"]
+  },
+  "include": ["render.tsx", "../src/styles.d.ts", "../global.d.ts"],
+  "exclude": ["../node_modules", "../build", "../.render"]
+}

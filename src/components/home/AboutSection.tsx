@@ -27,7 +27,7 @@ const AboutSection: React.FC<SectionProps> = ({ ...props }) => {
         >
           Ted Tyler Music Centre
         </GoogleAnalyticsLink>{" "}
-        on Wallace Street.
+        at 85 Wallace Street in Acton, Ontario.
       </p>
       <p>
         For inquiries about joining the Acton Citizens&#39; Band, or to request a performance at

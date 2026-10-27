@@ -101,7 +101,9 @@ const Header: React.FC<{ features: Feature[] }> = ({ features }) => {
 
 const Nav: React.FC<{ features: Feature[]; showBrand: boolean }> = ({ features, showBrand }) => {
   const [theme, setTheme] = useState<"dark" | "light">(() =>
-    document.documentElement.dataset.theme === "dark" ? "dark" : "light",
+    typeof document !== "undefined" && document.documentElement.dataset.theme === "dark"
+      ? "dark"
+      : "light",
   );
   const hasThemeOverride = useRef(false);
   useEffect(() => {

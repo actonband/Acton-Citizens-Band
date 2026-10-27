@@ -12,7 +12,7 @@ import {
 
 const auth = getAuth();
 
-if (isSignInWithEmailLink(auth, window.location.href)) {
+if (typeof window !== "undefined" && isSignInWithEmailLink(auth, window.location.href)) {
   let email = readStorage(() => window.localStorage, "signInEmail");
 
   if (!email) {

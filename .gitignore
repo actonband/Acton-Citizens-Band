@@ -38,3 +38,6 @@ yarn-error.log*
 
 # Firebase CLI diagnostic logs
 firebase-debug*.log
+
+# Temporary server renderer (never publish)
+/.render/
