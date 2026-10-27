@@ -3,13 +3,16 @@
     "site": "acton-citizens-band",
     "public": "build",
     "ignore": ["firebase.json", "**/.*", "**/node_modules/**", "**/AGENTS.md"],
-    "rewrites": [
+    "headers": [
       {
         "source": "**",
-        "destination": "/index.html"
-      }
-    ],
-    "headers": [
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "no-cache"
+          }
+        ]
+      },
       {
         "source": "**/*.@(js|css)",
         "headers": [
@@ -27,6 +30,14 @@
             "value": "no-cache"
           }
         ]
+      }
+    ],
+    "trailingSlash": true,
+    "redirects": [
+      {
+        "source": "/calendar",
+        "destination": "https://calendar.google.com/calendar/embed?src=94fded993db91a2a6d122b8aa105c80c99219e918f1c23d48bb2a74a11ebe34d%40group.calendar.google.com&ctz=America%2FToronto",
+        "type": 302
       }
     ]
   }

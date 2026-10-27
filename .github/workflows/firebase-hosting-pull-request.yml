@@ -12,6 +12,7 @@ jobs:
     if: ${{ github.event.pull_request.head.repo.full_name == github.repository }}
     runs-on: ubuntu-latest
     env:
+      SITE_PREVIEW: "true"
       FIREBASE_API_KEY: ${{ vars.FIREBASE_API_KEY }}
       FIREBASE_AUTH_DOMAIN: ${{ vars.FIREBASE_AUTH_DOMAIN }}
       FIREBASE_PROJECT_ID: ${{ vars.FIREBASE_PROJECT_ID }}
@@ -42,6 +43,7 @@ jobs:
       - run: npm test
       - run: npm run typecheck
       - run: npm run build
+      - run: node scripts/prepare-preview.mjs
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
