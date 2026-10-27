@@ -19,7 +19,8 @@
     "typecheck": "tsc --noEmit && tsc --project tests/tsconfig.json",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "check": "npm run format:check && npm run typecheck && npm test"
+    "check": "npm run format:check && npm run typecheck && npm test",
+    "assets:optimize": "node scripts/optimize-assets.mjs"
   },
   "browserslist": {
     "production": [
@@ -50,7 +51,8 @@
     "typescript": "^5.9.3",
     "webpack": "^5.81.0",
     "webpack-cli": "^5.0.2",
-    "webpack-dev-server": "^4.13.3"
+    "webpack-dev-server": "^4.13.3",
+    "sharp": "^0.35.5"
   },
   "description": "Community website for the Acton Citizens' Band in Acton, Ontario.",
   "homepage": "https://actoncitizensband.ca",
