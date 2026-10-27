@@ -78,26 +78,28 @@ const EventsSection = (props: SectionProps) => {
                       {event.title}
                     </div>
                   )}
-                  <div className="event-date">{formatEventDate(event.start)}</div>
-                  <div className="event-time">
-                    {formatEventTime(event.start)}
-                    {event.end ? " - " + formatEventTime(event.end) : ""}
-                  </div>
-                  {event.venue && <div className="event-venue">{event.venue}</div>}
-                  {event.address && (
-                    <div className="event-address">
-                      <GoogleAnalyticsLink
-                        eventName="Event_Address_Maps_Link_Click"
-                        eventCategory="Link"
-                        eventLabel="Event_Address_Maps_Link"
-                        href={"https://maps.google.com/?q=" + encodeURIComponent(event.address)}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        {event.address}
-                      </GoogleAnalyticsLink>
+                  <div className="event-details">
+                    <div className="event-date">{formatEventDate(event.start)}</div>
+                    <div className="event-time">
+                      {formatEventTime(event.start)}
+                      {event.end ? " - " + formatEventTime(event.end) : ""}
                     </div>
-                  )}
+                    {event.venue && <div className="event-venue">{event.venue}</div>}
+                    {event.address && (
+                      <div className="event-address">
+                        <GoogleAnalyticsLink
+                          eventName="Event_Address_Maps_Link_Click"
+                          eventCategory="Link"
+                          eventLabel="Event_Address_Maps_Link"
+                          href={"https://maps.google.com/?q=" + encodeURIComponent(event.address)}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          {event.address}
+                        </GoogleAnalyticsLink>
+                      </div>
+                    )}
+                  </div>
                   {event.description && (
                     <div className="event-description">{event.description}</div>
                   )}

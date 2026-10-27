@@ -55,6 +55,13 @@ test("keeps only valid HTTP(S) event links", () => {
 test("formats the Acton calendar date across midnight UTC", () => {
   assert.match(formatEventDate(new Date("2026-07-02T01:30:00Z")), /Jul 1, 2026/);
 });
+test("ignores an end timestamp earlier than the event starts", () => {
+  const event = parseEvent("id", {
+    start: timestamp("2026-12-05T19:00:00Z"),
+    end: timestamp("2026-12-05T18:00:00Z"),
+  });
+  assert.equal(event?.end, null);
+});
 test("uses Toronto daylight saving and winter offsets", () => {
   assert.match(formatEventTime(new Date("2026-07-01T23:30:00Z")), /7:30/);
   assert.match(formatEventTime(new Date("2026-01-01T23:30:00Z")), /6:30/);

@@ -49,6 +49,7 @@ function eventLink(value: unknown): EventLink | null {
 export function parseEvent(id: string, data: Record<string, unknown>): BandEvent | null {
   const start = date(data.start);
   if (!start) return null;
+  const end = date(data.end);
   return {
     id,
     start,
@@ -57,7 +58,7 @@ export function parseEvent(id: string, data: Record<string, unknown>): BandEvent
     address: text(data.address),
     description: text(data.description),
     membersNote: text(data.members_note),
-    end: date(data.end),
+    end: end && end.getTime() >= start.getTime() ? end : null,
     cancelled: data.cancelled === true,
     links: Array.isArray(data.links)
       ? data.links.map(eventLink).filter((link): link is EventLink => link !== null)
@@ -80,6 +81,5 @@ export function formatEventTime(value: Date): string {
     timeZone: "America/Toronto",
     hour: "numeric",
     minute: "2-digit",
-    timeZoneName: "short",
   }).format(value);
 }
