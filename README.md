@@ -1,8 +1,9 @@
 # Acton Citizens' Band
 
-A welcoming home for the Acton Citizens' Band, bringing people together through
-music in Acton, Ontario, since 1872. Discover the band, learn an instrument, join
-our musicians, and find upcoming concerts, parades, and community performances.
+The website of the Acton Citizens' Band, a volunteer community concert and marching
+band serving Acton, Ontario, since 1872. Learn about the band, explore free music
+lessons, become a member, and discover upcoming concerts, parades, and community
+performances.
 
 [Visit actoncitizensband.ca](https://actoncitizensband.ca)
 
