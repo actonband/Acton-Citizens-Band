@@ -1,7 +1,7 @@
 # Firebase Hosting deployment
 
 The configured Firebase project and Hosting site are both acton-citizens-band.
-Both workflows use Node 22, map repository variables into the build environment,
+Both workflows use Node 24, map repository variables into the build environment,
 and validate required Firebase configuration before installing/building.
 
 In GitHub Settings > Secrets and variables > Actions > Variables, add the public
@@ -27,7 +27,7 @@ referenced by both workflows, matching the secret reported by the repository own
 acton-citizens-band. Do not put this credential in public variables or .env.
 
 Both workflows run npm ci, npm run format:check, npm test, npm run typecheck, and npm run build
-before deployment. Node 22 and repository-variable mappings are configured. Main-branch pushes deploy live; same-repository PRs deploy
+before deployment. Node 24 and repository-variable mappings are configured. Main-branch pushes deploy live; same-repository PRs deploy
 preview channels. Fork PRs do not receive deployment credentials. This change
 does not itself push or deploy anything.
 
