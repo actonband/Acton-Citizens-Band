@@ -1,6 +1,7 @@
 import React from "react";
 import Section, { SectionProps } from "../Section";
 import GoogleAnalyticsLink from "../../utils/GoogleAnalyticsLink";
+import ResponsiveImage from "../ResponsiveImage";
 
 const AboutSection: React.FC<SectionProps> = ({ ...props }) => {
   const content = (
@@ -26,7 +27,7 @@ const AboutSection: React.FC<SectionProps> = ({ ...props }) => {
         >
           Ted Tyler Music Centre
         </GoogleAnalyticsLink>{" "}
-        on Wallace Street.
+        at 85 Wallace Street in Acton, Ontario.
       </p>
       <p>
         For inquiries about joining the Acton Citizens&#39; Band, or to request a performance at
@@ -57,12 +58,13 @@ const AboutSection: React.FC<SectionProps> = ({ ...props }) => {
 
       <div className="bandmaster-profile-content">
         <div className="bandmaster-profile-image-container">
-          <img
+          <ResponsiveImage
             className="bandmaster-profile-image"
             alt="Carin Pelka, bandmaster of the Acton Citizens' Band"
             src="/img/photos/Carin-Profile.png"
-            width="744"
-            height="744"
+            width={744}
+            height={744}
+            sizes="(max-width: 720px) 70vw, 240px"
             loading="lazy"
           />
         </div>

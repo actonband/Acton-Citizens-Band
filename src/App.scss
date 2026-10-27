@@ -1269,6 +1269,24 @@ html {
           .event-list .event .event-title {
             font-size: 1.3rem;
           }
+          .event-list .event .event-details {
+            display: grid;
+            gap: 0.2rem;
+            margin-bottom: 0.85rem;
+            padding-bottom: 0.85rem;
+            border-bottom: 1px solid var(--border);
+            color: var(--muted);
+            font-size: 0.95rem;
+
+            > div {
+              margin: 0;
+            }
+
+            .event-date {
+              color: var(--text);
+              font-weight: 600;
+            }
+          }
           .event-calendar-actions {
             display: flex;
             flex-wrap: wrap;

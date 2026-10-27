@@ -6,3 +6,5 @@ AGENTS.md
 package-lock.json
 public/
 .env*
+
+.render/

@@ -47,6 +47,14 @@ module.exports = {
       template: path.join(__dirname, "public", "index.html"),
       inject: "body",
       filename: "index.html",
+      // The prerender step replaces the root and metadata in this template.
+      minify: {
+        collapseWhitespace: true,
+        removeComments: true,
+        removeAttributeQuotes: false,
+        minifyCSS: true,
+        minifyJS: true,
+      },
     }),
     new MiniCssExtractPlugin({
       filename: "[name].[contenthash:8].css",
@@ -63,6 +71,9 @@ module.exports = {
               "**/.DS_Store",
               "**/AGENTS.md",
               "**/font/**/*.ttf",
+              "**/img/photos/**",
+              "**/favicon.ico",
+              "**/favicon.png",
             ],
           },
         },

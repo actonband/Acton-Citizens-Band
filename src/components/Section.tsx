@@ -1,4 +1,5 @@
 import React, { Suspense, useEffect, useRef, useState } from "react";
+import ResponsiveImage from "./ResponsiveImage";
 import type { MouseTrackingInstrumentProps } from "./instruments/MouseTrackingInstrument";
 const LazyMouseTrackingInstrument = React.lazy(
   () => import("./instruments/MouseTrackingInstrument"),
@@ -54,13 +55,14 @@ const Section: React.FC<SectionProps> = ({
     <>
       {!image ? null : (
         <figure className={`photo-break ${id === "about" ? "photo-break-opening" : ""}`}>
-          <img
+          <ResponsiveImage
             className="photo-break-image"
             src={image.path}
             alt={image.caption ?? ""}
-            width={image.width}
-            height={image.height}
+            width={image.width ?? 1600}
+            height={image.height ?? 900}
             loading={id === "about" ? "eager" : "lazy"}
+            fetchPriority={id === "about" ? "high" : undefined}
           />
           <figcaption className="photo-break-caption">
             {!image.caption ? null : <span>{image.caption}</span>}
