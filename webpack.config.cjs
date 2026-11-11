@@ -70,6 +70,7 @@ module.exports = {
               "**/*bkp*",
               "**/.DS_Store",
               "**/AGENTS.md",
+              "**/local/**",
               "**/font/**/*.ttf",
               "**/img/photos/**",
               "**/favicon.ico",

@@ -2,7 +2,7 @@
   "hosting": {
     "site": "acton-citizens-band",
     "public": "build",
-    "ignore": ["firebase.json", "**/.*", "**/node_modules/**", "**/AGENTS.md"],
+    "ignore": ["firebase.json", "**/.*", "**/node_modules/**", "**/AGENTS.md", "**/local/**"],
     "headers": [
       {
         "source": "**",

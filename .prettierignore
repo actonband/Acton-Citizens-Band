@@ -3,6 +3,7 @@ build/
 .firebase/
 html/
 AGENTS.md
+local/
 package-lock.json
 public/
 .env*

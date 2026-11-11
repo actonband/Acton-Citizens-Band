@@ -35,6 +35,7 @@ yarn-error.log*
 
 # Local agent instructions and review tracking
 /AGENTS.md
+/local/
 
 # Firebase CLI diagnostic logs
 firebase-debug*.log
