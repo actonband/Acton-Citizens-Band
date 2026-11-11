@@ -280,8 +280,27 @@ const Footer: React.FC<{ features: Feature[] }> = ({ features }) => {
           <a href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution</a>
         </div>
         <div className="footer-text">
+          <strong>Design &amp; Web Development</strong> ·{" "}
           <a href="https://brianmorris.info" target="_blank" rel="noopener noreferrer">
-            Website by Brian Morris
+            Brian Morris
+          </a>
+        </div>
+        <div className="media-sponsor">
+          <p>
+            <strong>Media Sponsor</strong> ·{" "}
+            <a href="https://rootsmarketing.ca/" target="_blank" rel="noopener noreferrer">
+              Roots Marketing
+            </a>
+          </p>
+          <a href="https://rootsmarketing.ca/" target="_blank" rel="noopener noreferrer">
+            <img
+              className="media-sponsor-logo"
+              src="/img/branding/RootsMarketing.svg"
+              alt="Roots Marketing"
+              width={800}
+              height={450}
+              loading="lazy"
+            />
           </a>
         </div>
       </div>
