@@ -61,9 +61,9 @@ const AboutSection: React.FC<SectionProps> = ({ ...props }) => {
           <ResponsiveImage
             className="bandmaster-profile-image"
             alt="Carin Pelka, bandmaster of the Acton Citizens' Band"
-            src="/img/photos/Carin-Profile.png"
-            width={744}
-            height={744}
+            src="/img/photos/ACB-Carin-2026-11-04.jpg"
+            width={960}
+            height={960}
             sizes="(max-width: 720px) 70vw, 240px"
             loading="lazy"
           />
