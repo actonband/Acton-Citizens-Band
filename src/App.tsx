@@ -285,6 +285,24 @@ const Footer: React.FC<{ features: Feature[] }> = ({ features }) => {
             Brian Morris
           </a>
         </div>
+        <div className="media-sponsor">
+          <p>
+            <strong>Media Sponsor</strong> ·{" "}
+            <a href="https://rootsmarketing.ca/" target="_blank" rel="noopener noreferrer">
+              Roots Marketing
+            </a>
+          </p>
+          <a href="https://rootsmarketing.ca/" target="_blank" rel="noopener noreferrer">
+            <img
+              className="media-sponsor-logo"
+              src="/img/branding/RootsMarketing.svg"
+              alt="Roots Marketing"
+              width={800}
+              height={450}
+              loading="lazy"
+            />
+          </a>
+        </div>
       </div>
     </footer>
   );

@@ -1439,6 +1439,7 @@ html {
     margin-bottom: 0;
     box-sizing: border-box;
     font-size: 0.85rem;
+    line-height: 1.6;
     .footer-content {
       display: flex;
       flex-direction: column;
@@ -1449,7 +1450,25 @@ html {
         display: flex;
         align-items: center;
         gap: 1.5rem;
-        margin-bottom: 0.5rem;
+      }
+      .media-sponsor {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.25rem;
+        max-width: 100%;
+
+        p {
+          line-height: 1.6;
+          text-align: center;
+          margin: 0;
+        }
+      }
+      .media-sponsor-logo {
+        display: block;
+        width: 112px;
+        height: auto;
+        margin: 0;
       }
       .social-media-logo {
         display: block;
