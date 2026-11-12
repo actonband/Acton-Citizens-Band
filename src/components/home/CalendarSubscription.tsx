@@ -1,4 +1,5 @@
 import React, { useEffect, useId, useRef, useState } from "react";
+import { trackEvent } from "../../utils/GoogleAnalytics";
 import GoogleAnalyticsLink from "../../utils/GoogleAnalyticsLink";
 import { copyText } from "../../utils/copyText";
 import {
@@ -86,9 +87,11 @@ const CalendarSubscription: React.FC = () => {
     if (rootRef.current && (await copyText(calendarFeedUrl, rootRef.current))) {
       setManualCopy(false);
       setCopied(true);
+      trackEvent("calendar_copy", { result: "success" });
     } else {
       setCopied(false);
       setManualCopy(true);
+      trackEvent("calendar_copy", { result: "manual_fallback" });
       inputRef.current?.focus();
       inputRef.current?.select();
     }
@@ -107,6 +110,8 @@ const CalendarSubscription: React.FC = () => {
     >
       <div className="calendar-split-button">
         <GoogleAnalyticsLink
+          data-analytics-group="calendar"
+          data-analytics-button="Add to Calendar"
           eventName="Events_Calendar_Subscribe_Click"
           eventCategory="Link"
           eventLabel={provider}
@@ -123,6 +128,8 @@ const CalendarSubscription: React.FC = () => {
         </GoogleAnalyticsLink>
         <button
           type="button"
+          data-analytics-event="calendar_menu_toggle"
+          data-analytics-label={open ? "close" : "open"}
           className="button calendar-dropdown-toggle"
           ref={toggleRef}
           aria-label="Choose calendar"
@@ -144,6 +151,8 @@ const CalendarSubscription: React.FC = () => {
               key={key}
               role="menuitem"
               tabIndex={-1}
+              data-analytics-group="calendar"
+              data-analytics-button="Add to Calendar"
               eventName="Events_Calendar_Subscribe_Click"
               eventCategory="Link"
               eventLabel={key}

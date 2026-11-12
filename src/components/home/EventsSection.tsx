@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import Section from "../Section";
 import type { SectionProps } from "../Section";
+import { trackEvent } from "../../utils/GoogleAnalytics";
 import GoogleAnalyticsLink from "../../utils/GoogleAnalyticsLink";
 import CalendarSubscription from "./CalendarSubscription";
 import { firestore } from "../../utils/Firebase";
@@ -33,11 +34,20 @@ const EventsSection = (props: SectionProps) => {
     setState({ status: "loading" });
     fetchEvents().then(
       (events) => {
-        if (active) setState({ status: "loaded", events });
+        if (active) {
+          setState({ status: "loaded", events });
+          trackEvent("events_load", {
+            result: events.length ? "success" : "empty",
+            event_count: events.length,
+          });
+        }
       },
       (error) => {
         console.error("Unable to load events:", error);
-        if (active) setState({ status: "error" });
+        if (active) {
+          setState({ status: "error" });
+          trackEvent("events_load", { result: "error" });
+        }
       },
     );
     return () => {
@@ -58,6 +68,7 @@ const EventsSection = (props: SectionProps) => {
                 <button
                   type="button"
                   className="button"
+                  data-analytics-event="events_retry"
                   onClick={() => setAttempt((value) => value + 1)}
                 >
                   Try again
@@ -71,7 +82,7 @@ const EventsSection = (props: SectionProps) => {
             )}
             {state.status === "loaded" &&
               state.events.map((event) => (
-                <div className="event" key={event.id}>
+                <div className="event" key={event.id} data-event-id={event.id}>
                   {event.title && (
                     <div className="event-title">
                       {event.cancelled ? "CANCELLED: " : ""}
@@ -129,6 +140,8 @@ const EventsSection = (props: SectionProps) => {
           <div className="event-calendar-actions">
             <CalendarSubscription />
             <GoogleAnalyticsLink
+              data-analytics-group="calendar"
+              data-analytics-button="View Google Calendar"
               eventName="Events_Section_Google_Calendar_Link_Click"
               eventCategory="Link"
               eventLabel="Events_Section_Google_Calendar_Link"
@@ -141,6 +154,8 @@ const EventsSection = (props: SectionProps) => {
               <span className="button-text">View Google Calendar</span>
             </GoogleAnalyticsLink>
             <GoogleAnalyticsLink
+              data-analytics-group="calendar"
+              data-analytics-button="View Facebook Events"
               eventName="Events_Section_Facebook_Events_Link_Click"
               eventCategory="Link"
               eventLabel="Events_Section_Facebook_Events_Link"
