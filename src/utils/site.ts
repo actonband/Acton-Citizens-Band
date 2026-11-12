@@ -3,7 +3,7 @@ export const site = {
   name: "Acton Citizens' Band",
   title: "Acton Citizens' Band | Community Concert & Marching Band, Ontario",
   description:
-    "Community music in Acton, Ontario since 1872. Discover our concerts, join the band, or learn an instrument with free lessons and instrument loans.",
+    "A volunteer community concert and marching band in Acton, Ontario since 1872. Discover local concerts, instrument lessons and free membership.",
   image: "/img/social/ACB-Social-Preview.png",
   imageAlt: "Acton Citizens' Band logo",
   imageWidth: 1280,
