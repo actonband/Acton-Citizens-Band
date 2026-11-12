@@ -13,21 +13,13 @@ const GoogleAnalyticsLink: React.FC<GoogleAnalyticsLinkProps> = ({
   children,
   ...props
 }) => {
-  const handleClick = (event: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
-    if (typeof window !== "undefined" && window.gtag) {
-      window.gtag("event", eventName, {
-        event_category: eventCategory,
-        event_label: eventLabel || props.href,
-      });
-    }
-
-    if (props.onClick) {
-      props.onClick(event);
-    }
-  };
-
   return (
-    <a {...props} onClick={handleClick}>
+    <a
+      {...props}
+      data-analytics-event={eventName}
+      data-analytics-category={eventCategory}
+      data-analytics-label={eventLabel}
+    >
       {children}
     </a>
   );

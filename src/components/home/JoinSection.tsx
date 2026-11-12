@@ -31,6 +31,8 @@ const JoinSection: React.FC<SectionProps> = ({ ...props }) => {
         eventName="Join_Section_Email_Link_Click"
         eventCategory="Link"
         eventLabel="Join_Section_Email_Link"
+        data-analytics-group="email"
+        data-analytics-button="Join Us"
         className="button contact-button"
         href="mailto:actonband@gmail.com?subject=Joining ACB!&body=Hello ACB, I am interested in joining the Acton Citizens' Band."
       >

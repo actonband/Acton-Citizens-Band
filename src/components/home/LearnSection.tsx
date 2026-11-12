@@ -26,6 +26,8 @@ const LearnSection: React.FC<SectionProps> = ({ ...props }) => {
         eventName="Learn_Section_Email_Link_Click"
         eventCategory="Link"
         eventLabel="Learn_Section_Email_Link"
+        data-analytics-group="email"
+        data-analytics-button="Learn With Us"
         className="button contact-button"
         href="mailto:actonband@gmail.com?subject=I want to learn!&body=Hello ACB, I am interested in learning music with the Acton Citizens' Band."
       >

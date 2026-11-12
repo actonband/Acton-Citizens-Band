@@ -44,9 +44,11 @@ const AboutSection: React.FC<SectionProps> = ({ ...props }) => {
       </p>
 
       <GoogleAnalyticsLink
-        eventName="About_Section_Email_Link_Click"
+        eventName="Contact_Us_Email_Click"
         eventCategory="Link"
-        eventLabel="About_Section_Email_Link"
+        eventLabel="Contact Us"
+        data-analytics-group="email"
+        data-analytics-button="Contact Us"
         className="button contact-button"
         href="mailto:actonband@gmail.com"
       >

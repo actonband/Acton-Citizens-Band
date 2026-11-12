@@ -4,7 +4,7 @@ import { InstrumentLoadingProvider } from "./components/instruments/InstrumentLo
 import { DeviceOrientationProvider } from "./components/instruments/DeviceOrientationContext";
 import Main from "./components/Main";
 import { AuthProvider } from "./components/auth/AuthContext";
-import googleAnalytics from "./utils/GoogleAnalytics";
+import googleAnalytics, { trackEvent } from "./utils/GoogleAnalytics";
 import { isAccountEnabled, parseFeature } from "./utils/features";
 import { firestore } from "./utils/Firebase";
 import { collection, getDocs, query } from "firebase/firestore";
@@ -39,9 +39,10 @@ const App: React.FC = () => {
       if (active) setFeatures(features);
     });
 
-    googleAnalytics.initGoogleAnalytics();
+    const cleanupAnalytics = googleAnalytics.initGoogleAnalytics();
     return () => {
       active = false;
+      cleanupAnalytics();
     };
   }, []);
 
@@ -130,6 +131,7 @@ const Nav: React.FC<{ features: Feature[]; showBrand: boolean }> = ({ features, 
     const next = theme === "dark" ? "light" : "dark";
     document.documentElement.dataset.theme = next;
     setTheme(next);
+    trackEvent("theme_change", { theme: next });
     try {
       localStorage.setItem("acb-theme", next);
     } catch {
@@ -187,6 +189,8 @@ const Nav: React.FC<{ features: Feature[]; showBrand: boolean }> = ({ features, 
         </a>
       </div>
       <button
+        data-analytics-event="navigation_menu_toggle"
+        data-analytics-label={open ? "close" : "open"}
         className="menu-toggle"
         type="button"
         aria-label={open ? "Close menu" : "Open menu"}
