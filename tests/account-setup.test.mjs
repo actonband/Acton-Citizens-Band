@@ -52,6 +52,17 @@ function setup({
 
   const FakeLogin = () => react.createElement("form", null, "Contact verification");
   const FakeFields = () => react.createElement("label", null, "Name");
+  const verificationAuth = {
+    reload: async () => {},
+    sendEmailVerification: async (u) => calls.push(["verifyEmail", u.uid]),
+  };
+  const verification = loadComponent("auth/EmailVerification", {
+    react: {
+      ...require("react"),
+      useSyncExternalStore: (_subscribe, getSnapshot) => getSnapshot(),
+    },
+    "firebase/auth": verificationAuth,
+  });
   const dependencies = {
     react,
     "firebase/app": { initializeApp: () => ({}), deleteApp: async () => {} },
@@ -66,6 +77,7 @@ function setup({
     },
     "../../utils/firebase": { firebaseApp: { options: {} }, firebaseAuth: { currentUser: user } },
     "../auth/Login": { default: FakeLogin, authError: () => "Auth error" },
+    "../auth/EmailVerification": verification,
     "./ProfileFormFields": { default: FakeFields },
     "./registration": {
       profileDraft: () => ({
@@ -100,6 +112,7 @@ function setup({
     if (!tree || typeof tree !== "object") return;
     if (Array.isArray(tree)) return tree.map((child) => find(child, predicate)).find(Boolean);
     if (predicate(tree)) return tree;
+    if (typeof tree.type === "function") return find(tree.type(tree.props), predicate);
     return find(tree.props?.children, predicate);
   }
   async function settle() {
@@ -164,7 +177,7 @@ test("an unverified email cannot reach profile matching until verification", asy
   await form.continue();
   assert.match(form.html(), /Verify Your Email/);
   assert.equal(form.calls.length, 0);
-  await form.click("Send Verification Email");
+  await form.click("Resend Verification Email");
   assert.deepEqual(form.calls, [["verifyEmail", "primary"]]);
   form.user.emailVerified = true;
   await form.continue();

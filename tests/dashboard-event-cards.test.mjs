@@ -515,44 +515,60 @@ test("a deleted updater account shows Name unavailable without a misleading retr
   assert.doesNotMatch(view.html(), /Retry Name|editor-uid/);
 });
 
-test("non-admin dashboard navigation exposes Events and keeps member management hidden", () => {
-  const empty = { default: () => null };
-  const react = require("react");
-  let nullState = 0;
-  const Dashboard = component("dashboard/Dashboard", {
-    react: {
-      ...react,
-      useState(initial) {
-        if (initial === null) {
-          nullState++;
-          if (nullState === 1)
-            initial = { uid: "registered-user", data: { member: false, admin: false } };
-          if (nullState === 2)
-            initial = { uid: "registered-user", data: { display_name: "Member" } };
-          if (nullState === 3) initial = { state: "complete" };
-        }
-        return react.useState(initial);
+for (const emailStatus of ["unverified", "verified", "phone-only"])
+  test(`non-admin profile exposes email verification only when needed: ${emailStatus}`, () => {
+    const empty = { default: () => null };
+    const react = require("react");
+    let nullState = 0;
+    const verificationUsers = [];
+    const Dashboard = component("dashboard/Dashboard", {
+      react: {
+        ...react,
+        useState(initial) {
+          if (initial === null) {
+            nullState++;
+            if (nullState === 1)
+              initial = { uid: "registered-user", data: { member: false, admin: false } };
+            if (nullState === 2)
+              initial = { uid: "registered-user", data: { display_name: "Member" } };
+            if (nullState === 3) initial = { state: "complete" };
+          }
+          return react.useState(initial);
+        },
       },
-    },
-    "../auth/AuthContext": {
-      useAuth: () => ({
-        user: { uid: "registered-user", email: "member@example.com", phoneNumber: null },
-        loading: false,
-        authSignOut: async () => {},
-      }),
-    },
-    "../../utils/firebase": { firestore: {} },
-    "../auth/Login": empty,
-    "./events/EventManager": { default: EventEditor },
-    "../profile/DeleteAccount": empty,
-    "./users/UserManagement": empty,
-    "../profile/ProfileFields": { ProfileSummary: () => null, ProfileContactRow: () => null },
-    "../profile/AccountSetup": empty,
-    "../profile/ProfileEditor": empty,
-    "../profile/registration": {},
-    "../ThemeToggle": { default: () => null },
+      "../auth/AuthContext": {
+        useAuth: () => ({
+          user: {
+            uid: "registered-user",
+            email: emailStatus === "phone-only" ? null : "member@example.com",
+            emailVerified: emailStatus === "verified",
+            phoneNumber: "+15195550123",
+          },
+          loading: false,
+          authSignOut: async () => {},
+        }),
+      },
+      "../../utils/firebase": { firestore: {} },
+      "../auth/Login": empty,
+      "../auth/EmailVerification": {
+        default: ({ user }) => {
+          verificationUsers.push(user.uid);
+          return createElement("button", null, "Resend Verification Email");
+        },
+      },
+      "./events/EventManager": { default: EventEditor },
+      "../profile/DeleteAccount": empty,
+      "./users/UserManagement": empty,
+      "../profile/ProfileFields": { ProfileSummary: () => null, ProfileContactRow: () => null },
+      "../profile/AccountSetup": empty,
+      "../profile/ProfileEditor": empty,
+      "../profile/registration": {},
+      "../ThemeToggle": { default: () => null },
+    });
+    const html = renderToStaticMarkup(createElement(Dashboard));
+    assert.match(html, />Events<\/button>/);
+    assert.doesNotMatch(html, /Manage Users|Manage Events|New Event/);
+    assert.deepEqual(verificationUsers, emailStatus === "unverified" ? ["registered-user"] : []);
+    if (emailStatus === "unverified") assert.match(html, /Resend Verification Email/);
+    else assert.doesNotMatch(html, /Resend Verification Email/);
   });
-  const html = renderToStaticMarkup(createElement(Dashboard));
-  assert.match(html, />Events<\/button>/);
-  assert.doesNotMatch(html, /Manage Users|Manage Events|New Event/);
-});

@@ -12,6 +12,7 @@ const { authError } = loadComponent("auth/Login", {
   "../../utils/phone": {},
   "../../utils/passwordPolicy": {},
   "./NewPasswordInput": {},
+  "./EmailVerification": {},
 });
 
 function setup(

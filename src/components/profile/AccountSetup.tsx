@@ -6,12 +6,12 @@ import {
   setPersistence,
   signOut,
   reload,
-  sendEmailVerification,
   updateCurrentUser,
 } from "firebase/auth";
 import type { Auth, User } from "firebase/auth";
 import { firebaseApp, firebaseAuth } from "../../utils/firebase";
 import Login, { authError } from "../auth/Login";
+import EmailVerification from "../auth/EmailVerification";
 import ProfileFormFields from "./ProfileFormFields";
 import { registration, registrationError, profileDraft } from "./registration";
 import type { SetupResult } from "./registration";
@@ -214,24 +214,11 @@ export default function AccountSetup({
         >
           <h2>Verify Your Email</h2>
           <p>
-            Send a verification email to {emailUser.email}. Open its link, then return here to
-            continue.
+            Verify {emailUser.email} using the link in your inbox, then return here to continue.
           </p>
+          <EmailVerification user={emailUser} disabled={busy} />
           <div className="dashboard-actions">
-            <button
-              className="dashboard-primary-button"
-              type="button"
-              disabled={busy}
-              onClick={() =>
-                void run(async () => {
-                  await sendEmailVerification(emailUser);
-                  setStatus("Verification email sent. Check your inbox and spam folder.");
-                })
-              }
-            >
-              Send Verification Email
-            </button>
-            <button disabled={busy} className="dashboard-secondary-button">
+            <button disabled={busy} className="dashboard-primary-button">
               {busy ? "Checking…" : "I’ve Verified My Email"}
             </button>
           </div>

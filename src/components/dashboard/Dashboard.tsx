@@ -3,6 +3,7 @@ import { doc, onSnapshot, serverTimestamp, updateDoc } from "firebase/firestore"
 import { useAuth } from "../auth/AuthContext";
 import { firestore } from "../../utils/firebase";
 import Login from "../auth/Login";
+import EmailVerification from "../auth/EmailVerification";
 import EventManager from "./events/EventManager";
 import DeleteAccount from "../profile/DeleteAccount";
 import UserManagement from "./users/UserManagement";
@@ -253,7 +254,7 @@ export default function Dashboard() {
         <strong>
           {(typeof ownProfile?.display_name === "string" && ownProfile.display_name) ||
             user.displayName ||
-            "Your account"}
+            "Your Account"}
         </strong>
         {user.email ? (
           <span>{user.email}</span>
@@ -485,6 +486,12 @@ export default function Dashboard() {
                                     }
                                   />
                                 )}
+                                {type === "email" &&
+                                  value &&
+                                  !user.emailVerified &&
+                                  addingContact !== type && (
+                                    <EmailVerification user={user} disabled={busy} />
+                                  )}
                               </div>
                             );
                           })}
