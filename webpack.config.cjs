@@ -6,7 +6,7 @@ const Dotenv = require("dotenv-webpack");
 
 module.exports = {
   mode: process.env.NODE_ENV === "production" ? "production" : "development",
-  entry: "./src/index.tsx",
+  entry: { main: "./src/index.tsx", dashboard: "./src/dashboard.tsx" },
   output: {
     path: path.join(__dirname, "build"),
     filename: "[name].[contenthash:8].js",
@@ -48,6 +48,7 @@ module.exports = {
       template: path.join(__dirname, "public", "index.html"),
       inject: "body",
       filename: "index.html",
+      chunks: ["main"],
       // The prerender step replaces the root and metadata in this template.
       minify: {
         collapseWhitespace: true,
@@ -56,6 +57,11 @@ module.exports = {
         minifyCSS: true,
         minifyJS: true,
       },
+    }),
+    new HtmlWebpackPlugin({
+      template: path.join(__dirname, "public", "dashboard.html"),
+      filename: "dashboard/index.html",
+      chunks: ["dashboard"],
     }),
     new MiniCssExtractPlugin({
       filename: "[name].[contenthash:8].css",
@@ -68,6 +74,7 @@ module.exports = {
           globOptions: {
             ignore: [
               "**/index.html",
+              "**/dashboard.html",
               "**/*bkp*",
               "**/.DS_Store",
               "**/AGENTS.md",
@@ -87,6 +94,11 @@ module.exports = {
     static: path.join(__dirname, "public"),
     compress: true,
     port: 3000,
-    historyApiFallback: true,
+    historyApiFallback: {
+      rewrites: [
+        { from: /^\/dashboard\/?$/, to: "/dashboard/index.html" },
+        { from: /^\/__\/auth\/action\/?$/, to: "/dashboard/index.html" },
+      ],
+    },
   },
 };
