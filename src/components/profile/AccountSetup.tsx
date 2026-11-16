@@ -216,12 +216,16 @@ export default function AccountSetup({
           <p>
             Verify {emailUser.email} using the link in your inbox, then return here to continue.
           </p>
-          <EmailVerification user={emailUser} disabled={busy} />
-          <div className="dashboard-actions">
-            <button disabled={busy} className="dashboard-primary-button">
-              {busy ? "Checking…" : "I’ve Verified My Email"}
-            </button>
-          </div>
+          <EmailVerification
+            user={emailUser}
+            disabled={busy}
+            showUnverifiedMessage={false}
+            primaryAction={
+              <button disabled={busy} className="dashboard-primary-button">
+                {busy ? "Checking…" : "I’ve Verified My Email"}
+              </button>
+            }
+          />
         </form>
       )}
       {phase === "details" && (

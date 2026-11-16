@@ -4,7 +4,7 @@ import * as React from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { loadComponent } from "./helpers/components.mjs";
 
-function setup({ send = async () => {}, refresh = async () => {} } = {}) {
+function setup({ send = async () => {}, refresh = async () => {}, primaryAction } = {}) {
   const calls = [];
   const module = loadComponent("auth/EmailVerification", {
     react: { ...React, useSyncExternalStore: (_subscribe, getSnapshot) => getSnapshot() },
@@ -20,11 +20,12 @@ function setup({ send = async () => {}, refresh = async () => {} } = {}) {
     },
   });
   const user = { uid: "current-account", email: "member@example.com", emailVerified: false };
-  const tree = (account = user) => module.default({ user: account });
+  const tree = (account = user) => module.default({ user: account, primaryAction });
   function findButton(element) {
     if (!element || typeof element !== "object") return;
     if (Array.isArray(element)) return element.map(findButton).find(Boolean);
-    if (element.type === "button") return element;
+    if (element.type === "button" && element.props.className === "dashboard-secondary-button")
+      return element;
     return findButton(element.props?.children);
   }
   return {
@@ -82,6 +83,18 @@ test("resend refreshes verification first and avoids sending after the link was 
   await view.resend();
   assert.deepEqual(view.calls, [["reload", "current-account"]]);
   assert.equal(view.html(), "");
+});
+
+test("setup can still continue when resend discovers the email has already been verified", async () => {
+  const view = setup({
+    refresh: async (user) => (user.emailVerified = true),
+    primaryAction: React.createElement("button", { type: "submit" }, "Continue Account Setup"),
+  });
+  await view.resend();
+  assert.deepEqual(view.calls, [["reload", "current-account"]]);
+  assert.match(view.html(), /type="submit"/);
+  assert.match(view.html(), /Continue Account Setup/);
+  assert.doesNotMatch(view.html(), /Resend Verification Email|not verified yet/);
 });
 
 test("verified accounts and phone-only accounts never show or send an email verification", async () => {

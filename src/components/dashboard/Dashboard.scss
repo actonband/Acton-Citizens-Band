@@ -834,24 +834,34 @@ body {
     align-items: center;
     gap: 0.6rem;
     margin-bottom: 0;
-    button {
-      min-height: 32px;
-      max-width: 100%;
-      padding: 0.2rem;
-      border: 0;
-      border-radius: 0;
+  }
+  .dashboard-auth-options button {
+    min-height: 32px;
+    max-width: 100%;
+    padding: 0.2rem;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    color: var(--muted);
+    font-weight: 400;
+    text-decoration: none;
+    &:hover {
       background: transparent;
-      color: var(--muted);
-      font-weight: 400;
-      text-decoration: none;
-      &:hover {
-        background: transparent;
-        color: var(--heading);
-        filter: none;
-      }
-      @media (pointer: coarse) {
-        min-height: 44px;
-      }
+      color: var(--heading);
+      filter: none;
+    }
+    @media (pointer: coarse) {
+      min-height: 44px;
+    }
+  }
+  .email-verification {
+    > p {
+      margin: 0.5rem 0;
+    }
+    .dashboard-actions {
+      align-items: center;
+      justify-content: flex-start;
+      margin: 0.75rem 0 0;
     }
   }
   [role="alert"] {

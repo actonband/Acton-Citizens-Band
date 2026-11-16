@@ -1,4 +1,5 @@
 import { useSyncExternalStore } from "react";
+import type { ReactNode } from "react";
 import { reload, sendEmailVerification } from "firebase/auth";
 import type { User } from "firebase/auth";
 
@@ -62,9 +63,13 @@ export function requestVerificationEmail(user: User, { refresh = false } = {}): 
 export default function EmailVerification({
   user,
   disabled = false,
+  primaryAction,
+  showUnverifiedMessage = true,
 }: {
   user: User;
   disabled?: boolean;
+  primaryAction?: ReactNode;
+  showUnverifiedMessage?: boolean;
 }) {
   const delivery = deliveryFor(user);
   const status = useSyncExternalStore(
@@ -75,22 +80,29 @@ export default function EmailVerification({
     () => delivery.status,
     () => delivery.status,
   );
-  if (!user.email || user.emailVerified || status.state === "verified") return null;
+  const needsVerification = !!user.email && !user.emailVerified && status.state !== "verified";
+  if (!needsVerification && !primaryAction) return null;
   return (
     <div className="email-verification">
-      <p className="dashboard-auth-note">Your email address is not verified yet.</p>
-      <div className="dashboard-actions dashboard-auth-options">
-        <button
-          type="button"
-          disabled={disabled || status.state === "sending"}
-          onClick={() => void requestVerificationEmail(user, { refresh: true })}
-        >
-          {status.state === "sending" ? "Sending…" : "Resend Verification Email"}
-        </button>
-      </div>
-      {status.message && (
+      {needsVerification && showUnverifiedMessage && (
+        <p className="dashboard-auth-note">Your email address is not verified yet.</p>
+      )}
+      {needsVerification && status.message && (
         <p role={status.state === "error" ? "alert" : "status"}>{status.message}</p>
       )}
+      <div className="dashboard-actions">
+        {primaryAction}
+        {needsVerification && (
+          <button
+            type="button"
+            className="dashboard-secondary-button"
+            disabled={disabled || status.state === "sending"}
+            onClick={() => void requestVerificationEmail(user, { refresh: true })}
+          >
+            {status.state === "sending" ? "Sending…" : "Resend Verification Email"}
+          </button>
+        )}
+      </div>
     </div>
   );
 }
