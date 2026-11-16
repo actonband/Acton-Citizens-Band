@@ -309,8 +309,8 @@ body {
   .button-icon {
     content: "";
     display: inline-block;
-    width: 1.4rem;
-    height: 1.4rem;
+    width: 1.25rem;
+    height: 1.25rem;
     background-size: cover;
     margin-right: 0.7rem;
   }
@@ -997,7 +997,6 @@ html {
               box-sizing: border-box;
             }
             > .button {
-              min-height: 44px;
               margin: 0;
             }
             @media (max-width: 900px) {
@@ -1013,7 +1012,6 @@ html {
               display: flex;
               height: 100%;
               .button {
-                min-height: 44px;
                 box-sizing: border-box;
                 font-family: inherit;
                 margin: 0;
