@@ -711,6 +711,12 @@ html {
     }
   }
 
+  input,
+  textarea,
+  select {
+    font-weight: 400;
+  }
+
   a:focus-visible,
   button:focus-visible,
   input:focus-visible {

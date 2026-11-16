@@ -22,7 +22,7 @@ export function accountType(access: Record<string, unknown>, requested: boolean)
     : access.member === true
       ? "Band Member"
       : requested
-        ? "Membership approval pending"
+        ? "Membership Approval Pending"
         : access.past_member === true
           ? "Past Member"
           : "Non-Member";
@@ -55,15 +55,15 @@ export function ProfileSummary({
               {details.instrument_details.map((item, index) => (
                 <div key={index}>
                   <strong>{String(item.name || "")}</strong>
-                  <span>{item.ownership === "band" ? "Band-loaned" : "Personal"}</span>
+                  <span>{item.ownership === "band" ? "Band-Loaned" : "Personal"}</span>
                   {item.ownership === "band" && (
                     <span>
-                      Loan form:{" "}
+                      Loan Form:{" "}
                       {item.loan_form_status === "signed"
                         ? "Signed"
                         : item.loan_form_status === "not_signed"
-                          ? "Not signed"
-                          : "Not sure"}{" "}
+                          ? "Not Signed"
+                          : "Not Sure"}{" "}
                       (self-reported)
                     </span>
                   )}
@@ -78,12 +78,12 @@ export function ProfileSummary({
       </div>
       {typeof details.notes === "string" && details.notes && (
         <div>
-          <dt>Other details</dt>
+          <dt>Other Details</dt>
           <dd>{details.notes}</dd>
         </div>
       )}
       <div className="profile-account-type-row">
-        <dt>Account type</dt>
+        <dt>Account Type</dt>
         <dd>
           <span>{accountType(access, requested)}</span>
         </dd>

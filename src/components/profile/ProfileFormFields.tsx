@@ -57,10 +57,10 @@ export default function ProfileFormFields({
                   }
                 >
                   <option value="" disabled>
-                    Choose ownership
+                    Choose Ownership
                   </option>
                   <option value="personal">Personal</option>
-                  <option value="band">Band-loaned</option>
+                  <option value="band">Band-Loaned</option>
                 </select>
               </span>
             </label>
@@ -74,7 +74,7 @@ export default function ProfileFormFields({
                       instrument(index, { loanForm: e.target.value as Instrument["loanForm"] })
                     }
                   >
-                    <option value="unsure">Not sure</option>
+                    <option value="unsure">Not Sure</option>
                     <option value="signed">Yes</option>
                     <option value="not_signed">No</option>
                   </select>
@@ -82,7 +82,7 @@ export default function ProfileFormFields({
               </label>
             )}
             <label>
-              Make, model or band asset number (optional)
+              Make, Model Or Band Asset Number (Optional)
               <input
                 maxLength={200}
                 value={item.details}
@@ -128,7 +128,7 @@ export default function ProfileFormFields({
         )}
       </div>
       <label>
-        Other details (optional)
+        Other Details (Optional)
         <textarea
           maxLength={1000}
           value={value.notes}
@@ -143,7 +143,7 @@ export default function ProfileFormFields({
             checked={value.membershipRequested}
             onChange={(e) => onChange({ ...value, membershipRequested: e.target.checked })}
           />
-          Request band membership
+          Request Band Membership
         </label>
       )}
     </>

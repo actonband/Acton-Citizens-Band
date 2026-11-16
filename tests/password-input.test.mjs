@@ -69,7 +69,7 @@ function setup() {
     cursor = 0;
     const tree = componentExports.default({
       auth,
-      label: "Create a password",
+      label: "Create A Password",
       value,
       onChange: (next) => {
         value = next;

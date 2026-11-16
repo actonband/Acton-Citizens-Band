@@ -200,7 +200,7 @@ const IdentityVerification = forwardRef<
           <>
             <p>Enter the code sent to {formatPhoneNumber(methods?.phone || "")}.</p>
             <label>
-              Verification code
+              Verification Code
               <input
                 ref={codeInput}
                 inputMode="numeric"

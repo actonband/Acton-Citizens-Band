@@ -331,6 +331,7 @@ body {
     margin-top: 0.4rem;
     padding: 0.65rem 0.8rem;
     font: inherit;
+    font-weight: 400;
     color: var(--text);
     background: var(--page-bg);
     border: 1px solid var(--border);
@@ -835,15 +836,21 @@ body {
     margin-bottom: 0;
     button {
       min-height: 32px;
+      max-width: 100%;
       padding: 0.2rem;
+      border: 0;
+      border-radius: 0;
       background: transparent;
       color: var(--muted);
       font-weight: 400;
-      text-decoration: underline;
-      text-underline-offset: 0.2em;
+      text-decoration: none;
       &:hover {
+        background: transparent;
         color: var(--heading);
         filter: none;
+      }
+      @media (pointer: coarse) {
+        min-height: 44px;
       }
     }
   }

@@ -32,7 +32,7 @@ export default function VerifyEmail() {
         <section>
           <h1>Email Verification</h1>
           <p role="status">{state}</p>
-          <a href="/dashboard/">Open dashboard</a>
+          <a href="/dashboard/">Open Dashboard</a>
         </section>
       </main>
     </div>

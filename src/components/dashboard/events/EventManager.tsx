@@ -403,7 +403,7 @@ export default function EventManager({ canEdit = false }: { canEdit?: boolean })
             </dd>
           </div>
           <div>
-            <dt>Updated by</dt>
+            <dt>Updated By</dt>
             <dd>
               {!selected
                 ? "Set when this event is saved"
@@ -436,7 +436,7 @@ export default function EventManager({ canEdit = false }: { canEdit?: boolean })
           <fieldset disabled={busy}>
             {(["title", "venue", "address"] as const).map((key) => (
               <label key={key} className={key === "title" ? "event-field-full" : undefined}>
-                {key === "title" ? "Event title" : key === "venue" ? "Venue" : "Address"}
+                {key === "title" ? "Event Title" : key === "venue" ? "Venue" : "Address"}
                 <input
                   ref={key === "title" ? titleInput : undefined}
                   required={key === "title"}
@@ -459,7 +459,7 @@ export default function EventManager({ canEdit = false }: { canEdit?: boolean })
               />
             </label>
             <label>
-              End (optional)
+              End (Optional)
               <input
                 type="datetime-local"
                 value={fields.end}
@@ -475,7 +475,7 @@ export default function EventManager({ canEdit = false }: { canEdit?: boolean })
               />
             </label>
             <label className="event-field-full">
-              Member note (visible publicly)
+              Member Note (Visible Publicly)
               <textarea
                 maxLength={10000}
                 value={fields.members_note}
@@ -499,7 +499,7 @@ export default function EventManager({ canEdit = false }: { canEdit?: boolean })
                       aria-label={`Link ${index + 1} label`}
                       value={link.text}
                       required={!!link.url.trim()}
-                      placeholder="More information"
+                      placeholder="More Information"
                       onChange={(event) =>
                         change(
                           "links",

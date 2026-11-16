@@ -115,13 +115,13 @@ export default function ResetPassword() {
                 <form onSubmit={submit} aria-busy={busy}>
                   <NewPasswordInput
                     auth={firebaseAuth}
-                    label="New password"
+                    label="New Password"
                     value={password}
                     onChange={setPassword}
                     disabled={busy}
                   />
                   <label>
-                    Confirm new password
+                    Confirm New Password
                     <input
                       type="password"
                       autoComplete="new-password"

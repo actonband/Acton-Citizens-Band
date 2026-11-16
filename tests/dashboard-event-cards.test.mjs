@@ -353,9 +353,9 @@ test("admin editor shows update metadata above the form with the updater's profi
   await view.settle();
   const html = view.html();
   assert.match(html, /<dt>Updated<\/dt>/);
-  assert.match(html, /<dt>Updated by<\/dt>/);
+  assert.match(html, /<dt>Updated By<\/dt>/);
   assert.match(html, /Event Organizer/);
-  assert.ok(html.indexOf("Updated by") < html.indexOf("<form"));
+  assert.ok(html.indexOf("Updated By") < html.indexOf("<form"));
   assert.doesNotMatch(html, /readonly|<input[^>]*value="Event Organizer"/i);
   assert.match(html, /Save Event/);
   assert.deepEqual(view.profileReads, ["editor-uid"]);

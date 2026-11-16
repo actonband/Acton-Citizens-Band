@@ -225,7 +225,7 @@ export default function AdminUserProfile({
                   <fieldset disabled={busy}>
                     <ProfileFormFields value={draft} onChange={setDraft} />
                     <label>
-                      Account type
+                      Account Type
                       <span className="dashboard-select">
                         <select
                           value={userType}
