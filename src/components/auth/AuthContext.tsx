@@ -1,50 +1,21 @@
-import { readStorage, removeStorage } from "../../utils/storage";
 import React, { createContext, useContext, useEffect, useState, ReactNode } from "react";
 import { firebaseAuth } from "../../utils/firebase";
-import {
-  getAuth,
-  User,
-  signInWithEmailLink,
-  isSignInWithEmailLink,
-  signOut,
-  onAuthStateChanged,
-} from "firebase/auth";
-
-const auth = getAuth();
-
-if (typeof window !== "undefined" && isSignInWithEmailLink(auth, window.location.href)) {
-  let email = readStorage(() => window.localStorage, "signInEmail");
-
-  if (!email) {
-    email = window.prompt("Please provide your email for confirmation");
-  }
-
-  if (email) {
-    signInWithEmailLink(auth, email, window.location.href)
-      .then(() => {
-        removeStorage(() => window.localStorage, "signInEmail");
-      })
-      .catch((error) => {
-        console.error("Error signing in with email link:", error);
-      });
-  } else {
-    console.error("Error signing in with email link: No email provided");
-  }
-}
+import { getAuth, User, signOut, onAuthStateChanged } from "firebase/auth";
+import Analytics from "../Analytics";
 
 const authSignOut = async () => {
-  return await signOut(getAuth()).catch((error) => {
-    console.error("Error signing out:", error);
-  });
+  await signOut(getAuth());
 };
 
 interface AuthContextType {
   user: User | null;
+  loading: boolean;
   authSignOut: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType>({
   user: null,
+  loading: true,
   authSignOut: async () => {},
 });
 
@@ -56,11 +27,20 @@ export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(firebaseAuth, setUser);
+    const unsubscribe = onAuthStateChanged(firebaseAuth, (nextUser) => {
+      setUser(nextUser);
+      setLoading(false);
+    });
     return unsubscribe;
   }, []);
 
-  return <AuthContext.Provider value={{ user, authSignOut }}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={{ user, loading, authSignOut }}>
+      <Analytics />
+      {children}
+    </AuthContext.Provider>
+  );
 };
