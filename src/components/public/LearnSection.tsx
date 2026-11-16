@@ -1,6 +1,6 @@
 import React from "react";
-import Section, { SectionProps } from "../Section";
-import GoogleAnalyticsLink from "../../utils/GoogleAnalyticsLink";
+import Section, { SectionProps } from "./Section";
+import GoogleAnalyticsLink from "../AnalyticsLink";
 
 const LearnSection: React.FC<SectionProps> = ({ ...props }) => {
   const content = (

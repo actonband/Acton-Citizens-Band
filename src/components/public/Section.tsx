@@ -1,8 +1,8 @@
 import React, { Suspense, useEffect, useRef, useState } from "react";
 import ResponsiveImage from "./ResponsiveImage";
-import type { MouseTrackingInstrumentProps } from "./instruments/MouseTrackingInstrument";
+import type { MouseTrackingInstrumentProps } from "../instruments/MouseTrackingInstrument";
 const LazyMouseTrackingInstrument = React.lazy(
-  () => import("./instruments/MouseTrackingInstrument"),
+  () => import("../instruments/MouseTrackingInstrument"),
 );
 
 export type SectionImageProps = {

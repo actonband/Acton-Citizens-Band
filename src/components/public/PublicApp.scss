@@ -1,6 +1,6 @@
 @font-face {
   font-family: "Raleway";
-  src: url("../public/font/Raleway/Raleway-VariableFont_wght.ttf") format("truetype");
+  src: url("../../../public/font/Raleway/Raleway-VariableFont_wght.ttf") format("truetype");
   font-weight: 100 900;
   font-style: normal;
   font-display: swap;
@@ -8,7 +8,7 @@
 
 @font-face {
   font-family: "Aleo";
-  src: url("../public/font/Raleway/Aleo-VariableFont_wght.ttf") format("truetype");
+  src: url("../../../public/font/Raleway/Aleo-VariableFont_wght.ttf") format("truetype");
   font-weight: 100 900;
   font-style: normal;
   font-display: swap;
@@ -24,7 +24,7 @@ $colour-dark-grey: #191919;
 $colour-darker-grey: #111111;
 $colour-full-black: #000000;
 
-$img-path: "../public/img/";
+$img-path: "../../../public/img/";
 $img-path-account: "#{$img-path}icons/Account.svg";
 $img-path-back: "#{$img-path}icons/Back.svg";
 $img-path-calendar: "#{$img-path}icons/Calendar.svg";

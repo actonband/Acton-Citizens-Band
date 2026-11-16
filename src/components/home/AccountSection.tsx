@@ -1,5 +1,5 @@
 import React from "react";
-import Section, { SectionProps } from "../Section";
+import Section, { SectionProps } from "../public/Section";
 import SignInForm from "../auth/SignInForm";
 import { useAuth } from "../auth/AuthContext";
 

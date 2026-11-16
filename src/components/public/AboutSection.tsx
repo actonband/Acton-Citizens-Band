@@ -1,7 +1,7 @@
 import React from "react";
-import Section, { SectionProps } from "../Section";
-import GoogleAnalyticsLink from "../../utils/GoogleAnalyticsLink";
-import ResponsiveImage from "../ResponsiveImage";
+import Section, { SectionProps } from "./Section";
+import GoogleAnalyticsLink from "../AnalyticsLink";
+import ResponsiveImage from "./ResponsiveImage";
 
 const AboutSection: React.FC<SectionProps> = ({ ...props }) => {
   const content = (

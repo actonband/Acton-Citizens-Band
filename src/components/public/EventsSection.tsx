@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import Section from "../Section";
-import type { SectionProps } from "../Section";
-import { trackEvent } from "../../utils/GoogleAnalytics";
-import GoogleAnalyticsLink from "../../utils/GoogleAnalyticsLink";
+import Section from "./Section";
+import type { SectionProps } from "./Section";
+import { trackEvent } from "../../utils/analytics";
+import GoogleAnalyticsLink from "../AnalyticsLink";
 import CalendarSubscription from "./CalendarSubscription";
-import { firestore } from "../../utils/Firebase";
+import { firestore } from "../../utils/firebase";
 import { collection, getDocs, orderBy, query, Timestamp, where } from "firebase/firestore";
 import { formatEventDate, formatEventTime, parseEvent } from "../../utils/events";
 import type { BandEvent } from "../../utils/events";

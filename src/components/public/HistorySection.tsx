@@ -1,5 +1,5 @@
 import React from "react";
-import Section, { SectionProps } from "../Section";
+import Section, { SectionProps } from "./Section";
 
 const HistorySection: React.FC<SectionProps> = ({ ...props }) => {
   const content = <></>;

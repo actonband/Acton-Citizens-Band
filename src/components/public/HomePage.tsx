@@ -5,7 +5,7 @@ import LearnSection from "./LearnSection";
 import JoinSection from "./JoinSection";
 import EventsSection from "./EventsSection";
 import HistorySection from "./HistorySection";
-import AccountSection from "./AccountSection";
+import AccountSection from "../home/AccountSection";
 import { isAccountEnabled } from "../../utils/features";
 
 type MainProps = {

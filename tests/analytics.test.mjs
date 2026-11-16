@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import GA from "react-ga4";
-import analytics, { trackEvent } from "../src/utils/GoogleAnalytics.ts";
+import analytics, { trackEvent } from "../src/utils/analytics.ts";
 
 test("analytics initializes once, tracks links and controls, and cleans up", () => {
   const calls = [];

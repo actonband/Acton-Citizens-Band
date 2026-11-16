@@ -1,5 +1,5 @@
 import { renderToString } from "react-dom/server";
-import App from "../src/App";
+import App from "../src/components/public/PublicApp";
 
 export { bandStructuredData, site } from "../src/utils/site";
 

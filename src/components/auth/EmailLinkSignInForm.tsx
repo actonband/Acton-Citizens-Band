@@ -1,5 +1,5 @@
 import React, { useRef, useState } from "react";
-import { firebaseAuth } from "../../utils/Firebase";
+import { firebaseAuth } from "../../utils/firebase";
 import { writeStorage } from "../../utils/storage";
 import { sendEmailLink } from "./emailLink";
 import type { ActionCodeSettings } from "firebase/auth";

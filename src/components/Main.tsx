@@ -1,6 +1,6 @@
 import React from "react";
 import type { Feature } from "../utils/features";
-import Home from "./home/HomePage";
+import Home from "./public/HomePage";
 
 type MainProps = {
   headerHeight: number;

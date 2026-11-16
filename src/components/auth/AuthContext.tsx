@@ -1,6 +1,6 @@
 import { readStorage, removeStorage } from "../../utils/storage";
 import React, { createContext, useContext, useEffect, useState, ReactNode } from "react";
-import { firebaseAuth } from "../../utils/Firebase";
+import { firebaseAuth } from "../../utils/firebase";
 import {
   getAuth,
   User,

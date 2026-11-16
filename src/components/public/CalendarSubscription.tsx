@@ -1,6 +1,6 @@
 import React, { useEffect, useId, useRef, useState } from "react";
-import { trackEvent } from "../../utils/GoogleAnalytics";
-import GoogleAnalyticsLink from "../../utils/GoogleAnalyticsLink";
+import { trackEvent } from "../../utils/analytics";
+import GoogleAnalyticsLink from "../AnalyticsLink";
 import { copyText } from "../../utils/copyText";
 import {
   calendarFeedUrl,

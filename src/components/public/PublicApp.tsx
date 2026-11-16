@@ -1,15 +1,15 @@
 import React, { useState, useEffect, useRef } from "react";
-import "./App.scss";
-import { InstrumentLoadingProvider } from "./components/instruments/InstrumentLoadingContext";
-import { DeviceOrientationProvider } from "./components/instruments/DeviceOrientationContext";
-import Main from "./components/Main";
-import { AuthProvider } from "./components/auth/AuthContext";
-import googleAnalytics, { trackEvent } from "./utils/GoogleAnalytics";
-import { isAccountEnabled, parseFeature } from "./utils/features";
-import { firestore } from "./utils/Firebase";
+import "./PublicApp.scss";
+import { InstrumentLoadingProvider } from "../instruments/InstrumentLoadingContext";
+import { DeviceOrientationProvider } from "../instruments/DeviceOrientationContext";
+import Main from "../Main";
+import { AuthProvider } from "../auth/AuthContext";
+import googleAnalytics, { trackEvent } from "../../utils/analytics";
+import { isAccountEnabled, parseFeature } from "../../utils/features";
+import { firestore } from "../../utils/firebase";
 import { collection, getDocs, query } from "firebase/firestore";
 
-import type { Feature } from "./utils/features";
+import type { Feature } from "../../utils/features";
 
 const App: React.FC = () => {
   const headerHeight = 0;
