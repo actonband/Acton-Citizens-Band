@@ -44,6 +44,16 @@ jobs:
       - run: npm run typecheck
       - run: npm run build
       - run: node scripts/prepare-preview.mjs
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: functions/package-lock.json
+      - run: npm ci --prefix functions
+      - run: node functions/index.cjs
+      - run: node --test tests/account-deletion.test.mjs
+      - run: node --test tests/admin-users.test.mjs
+      - run: node --test tests/registration.test.mjs
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: ${{ secrets.GITHUB_TOKEN }}

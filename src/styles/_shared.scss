@@ -1,0 +1,122 @@
+@font-face {
+  font-family: "Raleway";
+  src: url("~acb-fonts/Raleway/Raleway-VariableFont_wght.ttf") format("truetype");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Aleo";
+  src: url("~acb-fonts/Raleway/Aleo-VariableFont_wght.ttf") format("truetype");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+$colour-red: #cb0000;
+$colour-brighter-red: $colour-red;
+$colour-gold: #eeaa00;
+$colour-full-white: #ffffff;
+$colour-white: #e4e4e4;
+$colour-grey: #222222;
+$colour-dark-grey: #191919;
+$colour-darker-grey: #111111;
+$colour-full-black: #000000;
+
+:root {
+  color-scheme: light;
+  --page-bg: #faf9f6;
+  --header-bg: #faf9f6f5;
+  --text: #292929;
+  --heading: #161616;
+  --muted: #595959;
+  --surface: #ffffff;
+  --border: #d6d3ce;
+  --hover: #eae7e2;
+  --subtle: #77716b;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --page-bg: #191919;
+  --header-bg: #191919f5;
+  --text: #eeeeee;
+  --heading: #f1f1f1;
+  --muted: #b9b9b9;
+  --surface: #232323;
+  --border: #383838;
+  --hover: #303030;
+  --subtle: #747474;
+}
+
+@mixin section-heading {
+  font-family: "Raleway", sans-serif;
+  font-size: clamp(1.7rem, 3vw, 2.3rem);
+  line-height: 1.2;
+  color: var(--heading);
+  margin-bottom: 1.5rem;
+}
+
+@mixin heading-accent {
+  content: "";
+  display: block;
+  width: 2.5rem;
+  height: 3px;
+  background: $colour-red;
+  margin-bottom: 1rem;
+}
+
+@mixin button-base {
+  box-sizing: border-box;
+  min-height: 36px;
+  padding: 0.4rem 0.7rem;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  line-height: 1.5;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    background-color 0.2s,
+    color 0.2s,
+    border-color 0.2s;
+  &:focus-visible {
+    outline: 3px solid var(--text);
+    outline-offset: 4px;
+  }
+  &:disabled {
+    opacity: 0.55;
+    cursor: default;
+  }
+  @media (pointer: coarse) {
+    min-height: 44px;
+  }
+}
+
+@mixin primary-button {
+  background-color: $colour-red;
+  color: white;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  &:hover {
+    background-color: #ad0000;
+  }
+}
+
+@mixin theme-icon($image-path) {
+  display: block;
+  width: 24px;
+  height: 24px;
+  background-color: currentColor;
+  &.theme-icon-sun {
+    -webkit-mask: url("#{$image-path}icons/Sun.svg") center / contain no-repeat;
+    mask: url("#{$image-path}icons/Sun.svg") center / contain no-repeat;
+  }
+  &.theme-icon-moon {
+    -webkit-mask: url("#{$image-path}icons/Moon.svg") center / contain no-repeat;
+    mask: url("#{$image-path}icons/Moon.svg") center / contain no-repeat;
+  }
+}

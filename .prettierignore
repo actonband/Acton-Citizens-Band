@@ -5,7 +5,7 @@ html/
 AGENTS.md
 local/
 package-lock.json
-public/
+/public/
 .env*
 
 .render/
