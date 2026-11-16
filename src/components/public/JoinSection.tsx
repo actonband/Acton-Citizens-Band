@@ -1,6 +1,6 @@
 import React from "react";
 import Section, { SectionProps } from "./Section";
-import GoogleAnalyticsLink from "../AnalyticsLink";
+import AnalyticsLink from "../AnalyticsLink";
 
 const JoinSection: React.FC<SectionProps> = ({ ...props }) => {
   const now = new Date();
@@ -27,7 +27,7 @@ const JoinSection: React.FC<SectionProps> = ({ ...props }) => {
         Citizens' Band. Come and experience the joy of making music with us while proudly
         representing our beloved community of Acton.
       </p>
-      <GoogleAnalyticsLink
+      <AnalyticsLink
         eventName="Join_Section_Email_Link_Click"
         eventCategory="Link"
         eventLabel="Join_Section_Email_Link"
@@ -38,7 +38,7 @@ const JoinSection: React.FC<SectionProps> = ({ ...props }) => {
       >
         <span className="button-icon"></span>
         <span className="button-text">Join Us</span>
-      </GoogleAnalyticsLink>
+      </AnalyticsLink>
     </>
   );
 
@@ -49,7 +49,6 @@ const JoinSection: React.FC<SectionProps> = ({ ...props }) => {
       content={content}
       image={props.image}
       instrumentModel={props.instrumentModel}
-      headerHeight={props.headerHeight}
     />
   );
 };

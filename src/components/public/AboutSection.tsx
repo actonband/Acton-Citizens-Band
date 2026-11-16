@@ -1,6 +1,6 @@
 import React from "react";
 import Section, { SectionProps } from "./Section";
-import GoogleAnalyticsLink from "../AnalyticsLink";
+import AnalyticsLink from "../AnalyticsLink";
 import ResponsiveImage from "./ResponsiveImage";
 
 const AboutSection: React.FC<SectionProps> = ({ ...props }) => {
@@ -17,7 +17,7 @@ const AboutSection: React.FC<SectionProps> = ({ ...props }) => {
       </p>
       <p>
         Practices are held every Wednesday from 7:30 pm to 9:30 pm at the{" "}
-        <GoogleAnalyticsLink
+        <AnalyticsLink
           eventName="Band_Hall_Maps_Link_Click"
           eventCategory="Link"
           eventLabel="Band_Hall_Maps_Link"
@@ -26,24 +26,24 @@ const AboutSection: React.FC<SectionProps> = ({ ...props }) => {
           rel="noopener noreferrer"
         >
           Ted Tyler Music Centre
-        </GoogleAnalyticsLink>{" "}
+        </AnalyticsLink>{" "}
         at 85 Wallace Street in Acton, Ontario.
       </p>
       <p>
         For inquiries about joining the Acton Citizens&#39; Band, or to request a performance at
         your event, please reach out to us at{" "}
-        <GoogleAnalyticsLink
+        <AnalyticsLink
           eventName="About_Section_Email_Link_Click"
           eventCategory="Link"
           eventLabel="About_Section_Email_Link"
           href="mailto:actonband@gmail.com"
         >
           actonband@gmail.com
-        </GoogleAnalyticsLink>
+        </AnalyticsLink>
         . We would love to hear from you!
       </p>
 
-      <GoogleAnalyticsLink
+      <AnalyticsLink
         eventName="Contact_Us_Email_Click"
         eventCategory="Link"
         eventLabel="Contact Us"
@@ -54,7 +54,7 @@ const AboutSection: React.FC<SectionProps> = ({ ...props }) => {
       >
         <span className="button-icon"></span>
         <span className="button-text">Contact Us</span>
-      </GoogleAnalyticsLink>
+      </AnalyticsLink>
 
       <h3 className="section-sub-title">Our Bandmaster</h3>
 
@@ -91,7 +91,6 @@ const AboutSection: React.FC<SectionProps> = ({ ...props }) => {
       content={content}
       image={props.image}
       instrumentModel={props.instrumentModel}
-      headerHeight={props.headerHeight}
     />
   );
 };

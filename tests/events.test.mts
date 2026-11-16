@@ -1,6 +1,11 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { parseEvent, formatEventDate, formatEventTime } from "../src/utils/events.ts";
+import {
+  parseEvent,
+  formatEventDate,
+  formatEventTime,
+  formatEventUpdated,
+} from "../src/utils/events.ts";
 const timestamp = (iso: string) => ({ toDate: () => new Date(iso) });
 
 test("rejects missing, invalid and throwing timestamps", () => {
@@ -65,4 +70,12 @@ test("ignores an end timestamp earlier than the event starts", () => {
 test("uses Toronto daylight saving and winter offsets", () => {
   assert.match(formatEventTime(new Date("2026-07-01T23:30:00Z")), /7:30/);
   assert.match(formatEventTime(new Date("2026-01-01T23:30:00Z")), /6:30/);
+});
+
+test("Updated metadata uses Toronto date/time with seconds and handles legacy missing values", () => {
+  const text = formatEventUpdated(timestamp("2026-11-15T02:15:23Z"));
+  assert.match(text, /Nov 14, 2026/);
+  assert.match(text, /9:15:23/);
+  for (const invalid of [undefined, null, "not a timestamp", timestamp("invalid")])
+    assert.equal(formatEventUpdated(invalid), "Not recorded");
 });

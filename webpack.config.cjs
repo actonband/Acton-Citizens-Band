@@ -16,6 +16,7 @@ module.exports = {
   },
   optimization: { runtimeChunk: "single" },
   resolve: {
+    alias: { "acb-fonts": path.join(__dirname, "public/font") },
     extensions: [".tsx", ".ts", ".js"],
   },
   module: {

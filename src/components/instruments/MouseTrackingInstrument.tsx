@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import * as THREE from "three";
-import { DracoGLTFLoader } from "./dracoLoader";
+import { dracoGltfLoader } from "./dracoLoader";
 import { useInstrumentLoading } from "./InstrumentLoadingContext";
 import { useDeviceOrientation } from "./DeviceOrientationContext";
 import { getCurrentDeviceTilt } from "./deviceTilt";
@@ -126,7 +126,7 @@ const MouseTrackingInstrument: React.FC<MouseTrackingInstrumentProps> = ({ model
     // Load the instrument
     let instrument: THREE.Object3D;
 
-    DracoGLTFLoader.load(
+    dracoGltfLoader.load(
       modelPath,
       (gltf) => {
         if (disposed) {

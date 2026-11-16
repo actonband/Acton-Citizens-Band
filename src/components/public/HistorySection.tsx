@@ -11,7 +11,6 @@ const HistorySection: React.FC<SectionProps> = ({ ...props }) => {
       content={content}
       image={props.image}
       instrumentModel={props.instrumentModel}
-      headerHeight={props.headerHeight}
     />
   );
 };

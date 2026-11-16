@@ -1,4 +1,23 @@
 export type EventLink = { text: string; url: string };
+
+export function validateEventLinks(drafts: readonly EventLink[]): EventLink[] {
+  const links: EventLink[] = [];
+  drafts.forEach((draft, index) => {
+    const text = draft.text.trim();
+    const url = draft.url.trim();
+    if (!text && !url) return;
+    if (!text || !url) throw new Error(`Link ${index + 1}: enter both a label and a URL.`);
+    try {
+      const parsed = new URL(url);
+      if (!["https:", "http:"].includes(parsed.protocol) || !parsed.hostname) throw new Error();
+    } catch {
+      throw new Error(`Link ${index + 1}: enter a valid URL starting with https:// or http://.`);
+    }
+    links.push({ text, url });
+  });
+  if (links.length > 20) throw new Error("An event can have up to 20 links.");
+  return links;
+}
 export type BandEvent = {
   id: string;
   title: string;
@@ -82,4 +101,51 @@ export function formatEventTime(value: Date): string {
     hour: "numeric",
     minute: "2-digit",
   }).format(value);
+}
+
+export type DashboardEventRecord = { id: string; data: Record<string, unknown> };
+export type DashboardEvent = DashboardEventRecord & { details: BandEvent | null };
+
+export function groupDashboardEvents(records: DashboardEventRecord[], now: Date) {
+  const upcoming: DashboardEvent[] = [];
+  const past: DashboardEvent[] = [];
+  const undated: DashboardEvent[] = [];
+  for (const record of records) {
+    const details = parseEvent(record.id, record.data);
+    const event = { ...record, details };
+    if (!details) undated.push(event);
+    else if ((details.end || details.start).getTime() > now.getTime()) upcoming.push(event);
+    else past.push(event);
+  }
+  upcoming.sort(
+    (a, b) => a.details!.start.getTime() - b.details!.start.getTime() || a.id.localeCompare(b.id),
+  );
+  past.sort(
+    (a, b) => b.details!.start.getTime() - a.details!.start.getTime() || a.id.localeCompare(b.id),
+  );
+  return { upcoming, past, undated };
+}
+
+export function formatDashboardEventDate(value: Date) {
+  return new Intl.DateTimeFormat("en-CA", {
+    timeZone: "America/Toronto",
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  }).format(value);
+}
+
+export function formatEventUpdated(value: unknown): string {
+  const updated = date(value);
+  return updated
+    ? new Intl.DateTimeFormat("en-CA", {
+        timeZone: "America/Toronto",
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+        hour: "numeric",
+        minute: "2-digit",
+        second: "2-digit",
+      }).format(updated)
+    : "Not recorded";
 }

@@ -1,40 +1,12 @@
-@font-face {
-  font-family: "Raleway";
-  src: url("../../../public/font/Raleway/Raleway-VariableFont_wght.ttf") format("truetype");
-  font-weight: 100 900;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Aleo";
-  src: url("../../../public/font/Raleway/Aleo-VariableFont_wght.ttf") format("truetype");
-  font-weight: 100 900;
-  font-style: normal;
-  font-display: swap;
-}
-
-$colour-red: #cb0000;
-$colour-brighter-red: $colour-red;
-$colour-gold: #eeaa00;
-$colour-full-white: #ffffff;
-$colour-white: #e4e4e4;
-$colour-grey: #222222;
-$colour-dark-grey: #191919;
-$colour-darker-grey: #111111;
-$colour-full-black: #000000;
+@use "../../styles/shared" as *;
+@use "../../styles/events" as *;
 
 $img-path: "../../../public/img/";
-$img-path-account: "#{$img-path}icons/Account.svg";
-$img-path-back: "#{$img-path}icons/Back.svg";
 $img-path-calendar: "#{$img-path}icons/Calendar.svg";
-$img-path-create-account: "#{$img-path}icons/Create-Account.svg";
 $img-path-email: "#{$img-path}icons/Email.svg";
-$img-path-password-reset: "#{$img-path}icons/Password-Reset.svg";
 $img-path-google: "#{$img-path}icons/Google.svg";
 $img-path-microsoft: "#{$img-path}icons/Microsoft.svg";
 $img-path-facebook: "#{$img-path}icons/Facebook.svg";
-$img-path-yahoo: "#{$img-path}icons/Yahoo.svg";
 
 * {
   margin: 0;
@@ -232,71 +204,6 @@ body {
               margin-top: 1rem;
             }
 
-            .sign-in-container {
-              display: flex;
-              flex-direction: column;
-
-              .sign-in-methods-container {
-                display: flex;
-                flex-direction: column;
-                width: 100%;
-                gap: 0.5rem;
-                // text-align: center;
-                // justify-content: center;
-                // align-items: center;
-
-                .email-link-sign-in-container {
-                  width: 100%;
-
-                  .email-link-sign-in-form {
-                    min-width: 45%;
-                    max-width: 21rem;
-
-                    .input-text:disabled {
-                      font-weight: bold;
-                    }
-                  }
-
-                  .email-link-sign-in-message {
-                    width: 100%;
-                    font-weight: bold;
-                  }
-                }
-
-                .email-sign-in-container {
-                  width: 15rem;
-                }
-
-                .email-link-sign-in-container,
-                .email-sign-in-container {
-                  form {
-                    display: flex;
-                    flex-direction: column;
-                    gap: 0.5rem;
-                    width: 100%;
-                  }
-                }
-
-                .button-container {
-                  border-top: 2px solid $colour-brighter-red;
-                  padding-top: 0.5rem;
-                }
-              }
-
-              .sign-in-error {
-                width: 100%;
-                // height: 2.5rem;
-                max-width: 100%;
-                word-wrap: break-word;
-                overflow-wrap: break-word;
-                box-sizing: border-box;
-                text-align: center;
-                justify-content: center;
-                align-items: center;
-                margin: 0.5rem;
-              }
-            }
-
             .bandmaster-profile-content {
               display: flex;
               flex-direction: column;
@@ -318,22 +225,6 @@ body {
             .event-list {
               .events-empty-message {
                 margin: 1rem 0;
-              }
-
-              .event {
-                margin: 1rem 0;
-                padding: 0.5rem;
-                border: 0.1rem solid $colour-red;
-
-                .event-title {
-                  font-size: 1.2rem;
-                  font-weight: bold;
-                  margin: 0.5rem;
-                }
-
-                div {
-                  margin: 0.25rem 0.75rem;
-                }
               }
             }
 
@@ -402,30 +293,12 @@ body {
   }
 }
 
-.button-container {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  width: 15rem;
-}
-
-.button {
+#app .button {
+  @include button-base;
+  @include primary-button;
   display: inline-flex;
   align-items: center;
   justify-content: flex-start;
-  padding: 0.4rem 0.7rem;
-  color: $colour-full-white;
-  background-color: $colour-brighter-red;
-  border: 2px solid $colour-brighter-red;
-  font-size: 0.9rem;
-  font-weight: 600;
-  cursor: pointer;
-  text-decoration: none;
-  transition: background-color 0.5s ease;
-
-  &:hover {
-    background-color: $colour-red;
-  }
 
   .button-text {
     flex-grow: 1;
@@ -442,28 +315,12 @@ body {
     margin-right: 0.7rem;
   }
 
-  &.account-button .button-icon {
-    background-image: url($img-path-account);
-  }
-
-  &.back-button .button-icon {
-    background-image: url($img-path-back);
-  }
-
   &.calendar-button .button-icon {
     background-image: url($img-path-calendar);
   }
 
   &.contact-button .button-icon {
     background-image: url($img-path-email);
-  }
-
-  &.create-account-button .button-icon {
-    background-image: url($img-path-create-account);
-  }
-
-  &.password-reset-button .button-icon {
-    background-image: url($img-path-password-reset);
   }
 
   &.button-google .button-icon {
@@ -477,26 +334,6 @@ body {
   &.button-facebook .button-icon {
     background-image: url($img-path-facebook);
   }
-
-  &.button-yahoo .button-icon {
-    background-image: url($img-path-yahoo);
-  }
-}
-
-.input-text,
-.input-password {
-  display: inline-flex;
-  align-items: center;
-  justify-content: flex-start;
-  padding: 0.4rem 0.7rem;
-  border: 2px solid $colour-brighter-red;
-  border-radius: 0;
-  &:focus-visible {
-    outline: 2px solid currentColor;
-    outline-offset: 3px;
-  }
-  font-size: 1rem;
-  height: 1.4rem; // matches button height
 }
 
 @media (max-height: 500px) {
@@ -609,34 +446,6 @@ body {
           font-size: 1.6rem;
         }
       }
-
-      .main {
-        .section {
-          .section-bottom {
-            .section-content {
-              .sign-in-container {
-                .sign-in-methods-container {
-                  display: flex;
-                  flex-direction: row;
-                  align-items: flex-start;
-
-                  .button-container {
-                    border-top: none;
-                    border-left: 2px solid $colour-brighter-red;
-                    padding-top: 0;
-                    padding-left: 0.5rem;
-                  }
-                }
-              }
-
-              .event-links {
-                display: flex;
-                flex-direction: row;
-              }
-            }
-          }
-        }
-      }
     }
   }
 }
@@ -675,21 +484,6 @@ body {
 
             .section-content {
               flex-grow: 1;
-
-              .sign-in-container {
-                .sign-in-methods-container {
-                  display: flex;
-                  flex-direction: row;
-                  align-items: flex-start;
-
-                  .button-container {
-                    border-top: none;
-                    border-left: 2px solid $colour-brighter-red;
-                    padding-top: 0;
-                    padding-left: 0.5rem;
-                  }
-                }
-              }
 
               .bandmaster-profile-content {
                 display: flex;
@@ -769,21 +563,6 @@ body {
             .section-content {
               flex-grow: 1;
 
-              .sign-in-container {
-                .sign-in-methods-container {
-                  display: flex;
-                  flex-direction: row;
-                  align-items: flex-start;
-
-                  .button-container {
-                    border-top: none;
-                    border-left: 2px solid $colour-brighter-red;
-                    padding-top: 0;
-                    padding-left: 0.5rem;
-                  }
-                }
-              }
-
               .bandmaster-profile-content {
                 display: flex;
                 flex-direction: row;
@@ -862,21 +641,6 @@ body {
             .section-content {
               flex-grow: 1;
 
-              .sign-in-container {
-                .sign-in-methods-container {
-                  display: flex;
-                  flex-direction: row;
-                  align-items: flex-start;
-
-                  .button-container {
-                    border-top: none;
-                    border-left: 2px solid $colour-brighter-red;
-                    padding-top: 0;
-                    padding-left: 0.5rem;
-                  }
-                }
-              }
-
               .bandmaster-profile-content {
                 display: flex;
                 flex-direction: row;
@@ -920,30 +684,6 @@ body {
   }
 }
 
-:root {
-  color-scheme: light;
-  --page-bg: #faf9f6;
-  --header-bg: #faf9f6f5;
-  --text: #292929;
-  --heading: #161616;
-  --muted: #595959;
-  --surface: #ffffff;
-  --border: #d6d3ce;
-  --hover: #eae7e2;
-  --subtle: #77716b;
-}
-:root[data-theme="dark"] {
-  color-scheme: dark;
-  --page-bg: #191919;
-  --header-bg: #191919f5;
-  --text: #eeeeee;
-  --heading: #f1f1f1;
-  --muted: #b9b9b9;
-  --surface: #232323;
-  --border: #383838;
-  --hover: #303030;
-  --subtle: #747474;
-}
 html,
 body {
   background-color: var(--page-bg);
@@ -1193,19 +933,10 @@ html {
           max-width: none;
           scroll-margin-top: 88px !important;
           .section-title {
-            font-family: "Raleway", sans-serif;
-            font-size: clamp(1.7rem, 3vw, 2.3rem);
-            line-height: 1.2;
-            color: var(--heading);
-            margin-bottom: 1.5rem;
+            @include section-heading;
           }
           .section-title::before {
-            content: "";
-            display: block;
-            width: 2.5rem;
-            height: 3px;
-            background: $colour-red;
-            margin-bottom: 1rem;
+            @include heading-accent;
           }
           .section-sub-title {
             clear: both;
@@ -1230,16 +961,6 @@ html {
               text-decoration-color: $colour-red;
             }
           }
-          .button {
-            background-color: $colour-red;
-            color: white;
-            border: 0;
-            border-radius: 4px;
-          }
-          .button:hover {
-            background-color: $colour-red;
-            filter: brightness(0.9);
-          }
           .bandmaster-profile-content {
             gap: 1.5rem;
             align-items: center;
@@ -1259,33 +980,9 @@ html {
             margin: 0;
           }
           .event-list .event {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-left: 4px solid $colour-red;
-            padding: 1.25rem;
-            border-radius: 4px;
+            @include event-surface;
+            @include event-content;
             margin: 1.25rem 0;
-          }
-          .event-list .event .event-title {
-            font-size: 1.3rem;
-          }
-          .event-list .event .event-details {
-            display: grid;
-            gap: 0.2rem;
-            margin-bottom: 0.85rem;
-            padding-bottom: 0.85rem;
-            border-bottom: 1px solid var(--border);
-            color: var(--muted);
-            font-size: 0.95rem;
-
-            > div {
-              margin: 0;
-            }
-
-            .event-date {
-              color: var(--text);
-              font-weight: 600;
-            }
           }
           .event-calendar-actions {
             display: flex;
@@ -1344,8 +1041,6 @@ html {
               }
             }
             .button:focus-visible {
-              outline: 2px solid var(--text);
-              outline-offset: 3px;
               z-index: 1;
             }
             .calendar-dropdown {
@@ -1583,17 +1278,6 @@ html {
         flex-direction: column;
       }
     }
-    .main
-      .section
-      .section-bottom
-      .section-content
-      .sign-in-container
-      .sign-in-methods-container
-      .email-link-sign-in-container
-      .email-link-sign-in-form {
-      max-width: 100%;
-      min-width: 0;
-    }
   }
 }
 @media (max-width: 900px) {
@@ -1723,35 +1407,20 @@ html {
       color: var(--text);
       background: transparent;
       border: 0;
-      border-bottom: 2px solid transparent;
       cursor: pointer;
       justify-content: center;
       gap: 0.65rem;
       &:hover {
-        border-bottom-color: $colour-red;
+        background: transparent;
+        color: var(--muted);
       }
     }
     .theme-icon {
-      display: block;
-      width: 24px;
-      height: 24px;
+      @include theme-icon($img-path);
       flex: 0 0 24px;
-      background-color: currentColor;
-      &.theme-icon-sun {
-        -webkit-mask: url("#{$img-path}icons/Sun.svg") center / contain no-repeat;
-        mask: url("#{$img-path}icons/Sun.svg") center / contain no-repeat;
-      }
-      &.theme-icon-moon {
-        -webkit-mask: url("#{$img-path}icons/Moon.svg") center / contain no-repeat;
-        mask: url("#{$img-path}icons/Moon.svg") center / contain no-repeat;
-      }
     }
   }
   .main .section .section-bottom .section-content .calendar-subscription {
-    .calendar-split-button .button {
-      background: $colour-red;
-      color: white;
-    }
     .calendar-dropdown {
       background: $colour-red;
       border-color: $colour-red;

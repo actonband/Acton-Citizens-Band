@@ -7,7 +7,7 @@ dracoLoader.setDecoderPath(
     "https://www.gstatic.com/draco/versioned/decoders/1.5.6/",
 );
 
-const DracoGLTFLoader = new GLTFLoader();
-DracoGLTFLoader.setDRACOLoader(dracoLoader);
+const dracoGltfLoader = new GLTFLoader();
+dracoGltfLoader.setDRACOLoader(dracoLoader);
 
-export { DracoGLTFLoader };
+export { dracoGltfLoader };

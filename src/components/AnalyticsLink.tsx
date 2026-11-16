@@ -1,12 +1,12 @@
 import React from "react";
 
-interface GoogleAnalyticsLinkProps extends React.AnchorHTMLAttributes<HTMLAnchorElement> {
+interface AnalyticsLinkProps extends React.AnchorHTMLAttributes<HTMLAnchorElement> {
   eventName: string;
   eventCategory: string;
   eventLabel?: string;
 }
 
-const GoogleAnalyticsLink: React.FC<GoogleAnalyticsLinkProps> = ({
+const AnalyticsLink: React.FC<AnalyticsLinkProps> = ({
   eventName,
   eventCategory,
   eventLabel,
@@ -25,4 +25,4 @@ const GoogleAnalyticsLink: React.FC<GoogleAnalyticsLinkProps> = ({
   );
 };
 
-export default GoogleAnalyticsLink;
+export default AnalyticsLink;

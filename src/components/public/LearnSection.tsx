@@ -1,6 +1,6 @@
 import React from "react";
 import Section, { SectionProps } from "./Section";
-import GoogleAnalyticsLink from "../AnalyticsLink";
+import AnalyticsLink from "../AnalyticsLink";
 
 const LearnSection: React.FC<SectionProps> = ({ ...props }) => {
   const content = (
@@ -22,7 +22,7 @@ const LearnSection: React.FC<SectionProps> = ({ ...props }) => {
         musician keen to learn a new instrument, you are welcome in the Junior Band.
       </p>
 
-      <GoogleAnalyticsLink
+      <AnalyticsLink
         eventName="Learn_Section_Email_Link_Click"
         eventCategory="Link"
         eventLabel="Learn_Section_Email_Link"
@@ -33,7 +33,7 @@ const LearnSection: React.FC<SectionProps> = ({ ...props }) => {
       >
         <span className="button-icon"></span>
         <span className="button-text">Learn With Us</span>
-      </GoogleAnalyticsLink>
+      </AnalyticsLink>
     </>
   );
 
@@ -44,7 +44,6 @@ const LearnSection: React.FC<SectionProps> = ({ ...props }) => {
       content={content}
       image={props.image}
       instrumentModel={props.instrumentModel}
-      headerHeight={props.headerHeight}
     />
   );
 };

@@ -2,12 +2,13 @@ import { useEffect, useState } from "react";
 import Section from "./Section";
 import type { SectionProps } from "./Section";
 import { trackEvent } from "../../utils/analytics";
-import GoogleAnalyticsLink from "../AnalyticsLink";
+import AnalyticsLink from "../AnalyticsLink";
 import CalendarSubscription from "./CalendarSubscription";
 import { firestore } from "../../utils/firebase";
 import { collection, getDocs, orderBy, query, Timestamp, where } from "firebase/firestore";
-import { formatEventDate, formatEventTime, parseEvent } from "../../utils/events";
+import { parseEvent } from "../../utils/events";
 import type { BandEvent } from "../../utils/events";
+import EventDetails from "../EventDetails";
 
 type EventsState =
   { status: "loading" } | { status: "error" } | { status: "loaded"; events: BandEvent[] };
@@ -71,7 +72,7 @@ const EventsSection = (props: SectionProps) => {
                   data-analytics-event="events_retry"
                   onClick={() => setAttempt((value) => value + 1)}
                 >
-                  Try again
+                  Try Again
                 </button>
               </div>
             )}
@@ -83,63 +84,13 @@ const EventsSection = (props: SectionProps) => {
             {state.status === "loaded" &&
               state.events.map((event) => (
                 <div className="event" key={event.id} data-event-id={event.id}>
-                  {event.title && (
-                    <div className="event-title">
-                      {event.cancelled ? "CANCELLED: " : ""}
-                      {event.title}
-                    </div>
-                  )}
-                  <div className="event-details">
-                    <div className="event-date">{formatEventDate(event.start)}</div>
-                    <div className="event-time">
-                      {formatEventTime(event.start)}
-                      {event.end ? " - " + formatEventTime(event.end) : ""}
-                    </div>
-                    {event.venue && <div className="event-venue">{event.venue}</div>}
-                    {event.address && (
-                      <div className="event-address">
-                        <GoogleAnalyticsLink
-                          eventName="Event_Address_Maps_Link_Click"
-                          eventCategory="Link"
-                          eventLabel="Event_Address_Maps_Link"
-                          href={"https://maps.google.com/?q=" + encodeURIComponent(event.address)}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          {event.address}
-                        </GoogleAnalyticsLink>
-                      </div>
-                    )}
-                  </div>
-                  {event.description && (
-                    <div className="event-description">{event.description}</div>
-                  )}
-                  {event.membersNote && (
-                    <div className="event-members-note">Members: {event.membersNote}</div>
-                  )}
-                  {event.links.length > 0 && (
-                    <div className="event-links">
-                      {event.links.map((link, index) => (
-                        <GoogleAnalyticsLink
-                          key={event.id + "-" + index}
-                          eventName="Event_Link_Click"
-                          eventCategory="Link"
-                          eventLabel="Event_Link"
-                          href={link.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          {link.text}
-                        </GoogleAnalyticsLink>
-                      ))}
-                    </div>
-                  )}
+                  <EventDetails event={event} analytics />
                 </div>
               ))}
           </div>
           <div className="event-calendar-actions">
             <CalendarSubscription />
-            <GoogleAnalyticsLink
+            <AnalyticsLink
               data-analytics-group="calendar"
               data-analytics-button="View Google Calendar"
               eventName="Events_Section_Google_Calendar_Link_Click"
@@ -152,8 +103,8 @@ const EventsSection = (props: SectionProps) => {
             >
               <span className="button-icon" aria-hidden="true" />
               <span className="button-text">View Google Calendar</span>
-            </GoogleAnalyticsLink>
-            <GoogleAnalyticsLink
+            </AnalyticsLink>
+            <AnalyticsLink
               data-analytics-group="calendar"
               data-analytics-button="View Facebook Events"
               eventName="Events_Section_Facebook_Events_Link_Click"
@@ -166,7 +117,7 @@ const EventsSection = (props: SectionProps) => {
             >
               <span className="button-icon" aria-hidden="true" />
               <span className="button-text">View Facebook Events</span>
-            </GoogleAnalyticsLink>
+            </AnalyticsLink>
           </div>
         </>
       }

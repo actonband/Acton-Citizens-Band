@@ -2,17 +2,16 @@ import React, { useState, useEffect, useRef } from "react";
 import "./PublicApp.scss";
 import { InstrumentLoadingProvider } from "../instruments/InstrumentLoadingContext";
 import { DeviceOrientationProvider } from "../instruments/DeviceOrientationContext";
-import Main from "../Main";
+import HomePage from "./HomePage";
+import ThemeToggle from "../ThemeToggle";
 import { AuthProvider } from "../auth/AuthContext";
-import googleAnalytics, { trackEvent } from "../../utils/analytics";
 import { isAccountEnabled, parseFeature } from "../../utils/features";
 import { firestore } from "../../utils/firebase";
 import { collection, getDocs, query } from "firebase/firestore";
 
 import type { Feature } from "../../utils/features";
 
-const App: React.FC = () => {
-  const headerHeight = 0;
+const PublicApp: React.FC = () => {
   const [features, setFeatures] = useState<Feature[]>([]);
 
   useEffect(() => {
@@ -39,10 +38,8 @@ const App: React.FC = () => {
       if (active) setFeatures(features);
     });
 
-    const cleanupAnalytics = googleAnalytics.initGoogleAnalytics();
     return () => {
       active = false;
-      cleanupAnalytics();
     };
   }, []);
 
@@ -56,7 +53,7 @@ const App: React.FC = () => {
             </a>
             <Header features={features} />
             <BandLogo className="page-logo" />
-            <Main headerHeight={headerHeight} features={features} />
+            <HomePage features={features} />
             <Footer features={features} />
           </div>
         </DeviceOrientationProvider>
@@ -101,43 +98,6 @@ const Header: React.FC<{ features: Feature[] }> = ({ features }) => {
 };
 
 const Nav: React.FC<{ features: Feature[]; showBrand: boolean }> = ({ features, showBrand }) => {
-  const [theme, setTheme] = useState<"dark" | "light">(() =>
-    typeof document !== "undefined" && document.documentElement.dataset.theme === "dark"
-      ? "dark"
-      : "light",
-  );
-  const hasThemeOverride = useRef(false);
-  useEffect(() => {
-    try {
-      const saved = localStorage.getItem("acb-theme");
-      hasThemeOverride.current = saved === "light" || saved === "dark";
-    } catch {
-      /* Follow the device preference without storage. */
-    }
-    if (!window.matchMedia) return;
-    const preference = window.matchMedia("(prefers-color-scheme: dark)");
-    const followDevice = () => {
-      if (hasThemeOverride.current) return;
-      const next = preference.matches ? "dark" : "light";
-      document.documentElement.dataset.theme = next;
-      setTheme(next);
-    };
-    followDevice();
-    preference.addEventListener("change", followDevice);
-    return () => preference.removeEventListener("change", followDevice);
-  }, []);
-  const toggleTheme = () => {
-    hasThemeOverride.current = true;
-    const next = theme === "dark" ? "light" : "dark";
-    document.documentElement.dataset.theme = next;
-    setTheme(next);
-    trackEvent("theme_change", { theme: next });
-    try {
-      localStorage.setItem("acb-theme", next);
-    } catch {
-      /* Theme works without storage. */
-    }
-  };
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState("");
   const navRef = useRef<HTMLElement>(null);
@@ -230,25 +190,11 @@ const Nav: React.FC<{ features: Feature[]; showBrand: boolean }> = ({ features, 
         )}
         {isAccountEnabled(features) && (
           <li className="nav-list-item" key="account">
-            <a href="#account" aria-current={active === "account" ? "location" : undefined}>
-              Account
-            </a>
+            <a href="/dashboard/">Account</a>
           </li>
         )}
         <li className="nav-list-item theme-menu-item">
-          <button
-            className="theme-toggle"
-            type="button"
-            onClick={toggleTheme}
-            aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
-            title={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
-          >
-            <span
-              className={`theme-icon theme-icon-${theme === "dark" ? "sun" : "moon"}`}
-              aria-hidden="true"
-            />
-            <span className="theme-label">{theme === "dark" ? "Light Mode" : "Dark Mode"}</span>
-          </button>
+          <ThemeToggle showLabel />
         </li>
       </ul>
     </nav>
@@ -312,4 +258,4 @@ const Footer: React.FC<{ features: Feature[] }> = ({ features }) => {
   );
 };
 
-export default App;
+export default PublicApp;

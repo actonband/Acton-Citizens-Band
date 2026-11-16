@@ -1,6 +1,6 @@
 import React, { useEffect, useId, useRef, useState } from "react";
 import { trackEvent } from "../../utils/analytics";
-import GoogleAnalyticsLink from "../AnalyticsLink";
+import AnalyticsLink from "../AnalyticsLink";
 import { copyText } from "../../utils/copyText";
 import {
   calendarFeedUrl,
@@ -109,7 +109,7 @@ const CalendarSubscription: React.FC = () => {
       }
     >
       <div className="calendar-split-button">
-        <GoogleAnalyticsLink
+        <AnalyticsLink
           data-analytics-group="calendar"
           data-analytics-button="Add to Calendar"
           eventName="Events_Calendar_Subscribe_Click"
@@ -119,13 +119,13 @@ const CalendarSubscription: React.FC = () => {
           href={selected.href}
           target={provider === "Apple" ? undefined : "_blank"}
           rel={provider === "Apple" ? undefined : "noopener noreferrer"}
-          aria-label={`Add to Calendar: ${selected.label}`}
+          aria-label={`Add to calendar: ${selected.label}`}
           title={selected.label}
           onClick={() => setOpen(false)}
         >
           <span className="button-icon" aria-hidden="true"></span>
-          <span className="button-text">Add to Calendar</span>
-        </GoogleAnalyticsLink>
+          <span className="button-text">Add To Calendar</span>
+        </AnalyticsLink>
         <button
           type="button"
           data-analytics-event="calendar_menu_toggle"
@@ -147,7 +147,7 @@ const CalendarSubscription: React.FC = () => {
       {open && (
         <div className="calendar-dropdown" id={menuId} role="menu" aria-label="Calendar options">
           {providers.map((key) => (
-            <GoogleAnalyticsLink
+            <AnalyticsLink
               key={key}
               role="menuitem"
               tabIndex={-1}
@@ -170,7 +170,7 @@ const CalendarSubscription: React.FC = () => {
               {key === provider && (
                 <span className="calendar-option-check" aria-hidden="true"></span>
               )}
-            </GoogleAnalyticsLink>
+            </AnalyticsLink>
           ))}
           <button
             type="button"
@@ -180,7 +180,7 @@ const CalendarSubscription: React.FC = () => {
             onClick={copyLink}
           >
             <span className="calendar-link-icon" aria-hidden="true" />
-            <span role="status">{copied ? "Copied" : "Copy calendar link"}</span>
+            <span role="status">{copied ? "Copied" : "Copy Calendar Link"}</span>
           </button>
           {manualCopy && (
             <input

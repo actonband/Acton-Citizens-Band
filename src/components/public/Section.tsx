@@ -15,22 +15,13 @@ export type SectionImageProps = {
 
 export type SectionProps = {
   id: string;
-  navItem?: string;
   title: string;
   content?: JSX.Element;
   image?: SectionImageProps;
   instrumentModel?: MouseTrackingInstrumentProps;
-  headerHeight?: number;
 };
 
-const Section: React.FC<SectionProps> = ({
-  id,
-  title,
-  content,
-  image,
-  instrumentModel,
-  headerHeight,
-}) => {
+const Section: React.FC<SectionProps> = ({ id, title, content, image, instrumentModel }) => {
   const sectionRef = useRef<HTMLElement>(null);
   const [nearViewport, setNearViewport] = useState(false);
   useEffect(() => {
@@ -76,11 +67,7 @@ const Section: React.FC<SectionProps> = ({
         aria-labelledby={`${id}-title`}
       >
         <div className="section-bottom">
-          <div
-            id={id}
-            className="section-content"
-            style={{ scrollMarginTop: `${headerHeight ?? 0}px` }}
-          >
+          <div id={id} className="section-content">
             <h2 id={`${id}-title`} className="section-title">
               {title}
             </h2>

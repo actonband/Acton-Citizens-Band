@@ -5,21 +5,18 @@ import LearnSection from "./LearnSection";
 import JoinSection from "./JoinSection";
 import EventsSection from "./EventsSection";
 import HistorySection from "./HistorySection";
-import AccountSection from "../home/AccountSection";
-import { isAccountEnabled } from "../../utils/features";
 
-type MainProps = {
-  headerHeight: number;
+type HomePageProps = {
   features: Feature[];
 };
 
-const HomePage: React.FC<MainProps> = ({ headerHeight, features }) => {
+const HomePage: React.FC<HomePageProps> = ({ features }) => {
   return (
-    <>
+    <main id="main" className="main">
+      <h1 className="visually-hidden">Acton Citizens' Band</h1>
       <AboutSection
         key="about"
         id="about"
-        navItem="About"
         title="About Us"
         image={{
           path: "/img/photos/Acton-Citizens-Band-CNE-1st-Prize-1947.JPG",
@@ -32,12 +29,10 @@ const HomePage: React.FC<MainProps> = ({ headerHeight, features }) => {
           modelPath: "/model/Trumpet.glb",
           tall: false,
         }}
-        headerHeight={headerHeight}
       />
       <LearnSection
         key="learn"
         id="learn"
-        navItem="Learn"
         title="Learn With Us"
         image={{
           path: "/img/photos/Acton-Citizens-Band-1958.JPG",
@@ -50,12 +45,10 @@ const HomePage: React.FC<MainProps> = ({ headerHeight, features }) => {
           modelPath: "/model/Clarinet.glb",
           tall: true,
         }}
-        headerHeight={headerHeight}
       />
       <JoinSection
         key="join"
         id="join"
-        navItem="Join"
         title="Join Us"
         image={{
           path: "/img/photos/Acton-Citizens-Band-New-Arena-Opening-1998-01.JPG",
@@ -68,12 +61,10 @@ const HomePage: React.FC<MainProps> = ({ headerHeight, features }) => {
           modelPath: "/model/Saxophone.glb",
           tall: true,
         }}
-        headerHeight={headerHeight}
       />
       <EventsSection
         key="events"
         id="events"
-        navItem="Events"
         title="Upcoming Events"
         image={{
           path: "/img/photos/Acton-Citizens-Band-1935.JPG",
@@ -86,27 +77,11 @@ const HomePage: React.FC<MainProps> = ({ headerHeight, features }) => {
           modelPath: "/model/Snare-Drum.glb",
           tall: false,
         }}
-        headerHeight={headerHeight}
       />
       {features.some((f) => f.name === "history" && f.enabled === true) && (
-        <HistorySection
-          key="history"
-          id="history"
-          navItem="History"
-          title="Our History"
-          headerHeight={headerHeight}
-        />
+        <HistorySection key="history" id="history" title="Our History" />
       )}
-      {isAccountEnabled(features) && (
-        <AccountSection
-          key="account"
-          id="account"
-          navItem="Account"
-          title="Account"
-          headerHeight={headerHeight}
-        />
-      )}
-    </>
+    </main>
   );
 };
 
