@@ -1,0 +1,95 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null
+        && (!exists(/databases/$(database)/documents/access/$(request.auth.uid))
+          || get(/databases/$(database)/documents/access/$(request.auth.uid)).data.get('deleted', false) != true);
+    }
+
+    function owns(uid) {
+      return signedIn() && request.auth.uid == uid;
+    }
+
+    function admin() {
+      return signedIn()
+        && get(/databases/$(database)/documents/access/$(request.auth.uid)).data.get('linking', false) != true
+        && get(/databases/$(database)/documents/access/$(request.auth.uid)).data.admin == true;
+    }
+
+    match /users/{uid} {
+      function validProfile() {
+        let data = request.resource.data;
+        return data.display_name is string && data.display_name.size() <= 100
+          && data.get('instruments', '') is string && data.get('instruments', '').size() <= 500
+          && data.membership_requested is bool
+          && data.updated_at == request.time;
+      }
+
+      allow get: if owns(uid) || admin();
+      allow list: if admin();
+      // Verified profile matching, contacts and structured details are written by the callable.
+      allow create: if false;
+      allow update: if owns(uid) && validProfile()
+        && get(/databases/$(database)/documents/access/$(uid)).data.get('linking', false) != true
+        && request.resource.data.diff(resource.data).affectedKeys()
+          .hasOnly(['membership_requested', 'updated_at']);
+    }
+
+    match /access/{uid} {
+      allow get: if owns(uid) || admin();
+      allow list: if admin();
+      // Registration starts without membership or administrator privileges.
+      allow create: if owns(uid)
+        && request.resource.data.keys().hasAll(['member', 'admin', 'analyticsId', 'created_at'])
+        && request.resource.data.keys().hasOnly(['member', 'admin', 'analyticsId', 'created_at'])
+        && request.resource.data.member == false
+        && request.resource.data.admin == false
+        && request.resource.data.created_at == request.time
+        && request.resource.data.analyticsId is string
+        && request.resource.data.analyticsId.matches('^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$');
+      // Only existing administrators manage permissions. Promotion requires existing membership.
+      allow update: if admin()
+        && resource.data.get('linking', false) != true && resource.data.get('deleted', false) != true
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['member', 'admin'])
+        && request.resource.data.member is bool && request.resource.data.admin is bool
+        && (!request.resource.data.admin || request.resource.data.member)
+        && (request.resource.data.admin == resource.data.admin || resource.data.member == true);
+    }
+
+    match /events/{eventId} {
+      function validEvent() {
+        let data = request.resource.data;
+        return data.title is string && data.title.size() > 0 && data.title.size() <= 500
+          && data.venue is string && data.venue.size() <= 500
+          && data.address is string && data.address.size() <= 500
+          && data.description is string && data.description.size() <= 10000
+          && data.members_note is string && data.members_note.size() <= 10000
+          && data.start is timestamp
+          && (data.end == null || (data.end is timestamp && data.end >= data.start))
+          && data.cancelled is bool && data.links is list && data.links.size() <= 20
+          && data.updated is timestamp && data.updated == request.time
+          && data.user_id == '/users/' + request.auth.uid;
+      }
+      function eventFields() {
+        return ['title', 'venue', 'address', 'description', 'members_note',
+          'start', 'end', 'cancelled', 'links', 'updated', 'user_id'];
+      }
+      // Existing event notes are intentionally public.
+      allow read: if true;
+      allow create: if admin() && validEvent()
+        && request.resource.data.keys().hasOnly(eventFields());
+      // Preserve legacy fields while restricting edits to fields supported by the editor.
+      allow update: if admin() && validEvent()
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(eventFields());
+    }
+
+    match /features/{featureId} {
+      allow read: if true;
+      allow update: if admin()
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['enabled'])
+        && request.resource.data.enabled is bool;
+    }
+  }
+}
