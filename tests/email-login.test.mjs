@@ -7,13 +7,23 @@ import * as phone from "../src/utils/phone.ts";
 
 const require = createRequire(import.meta.url);
 
-function setup({ methods = [], lookupError, policyError, props = {} } = {}) {
+function setup({
+  methods = [],
+  lookupError,
+  policyError,
+  verificationError,
+  phoneSendError,
+  phoneConfirmError,
+  emailLinkError,
+  props = {},
+} = {}) {
   const state = [];
   let cursor = 0;
   const calls = [];
   const policyChecks = [];
   const captchaCalls = [];
-  const authInstance = { currentUser: null };
+  const authInstance = { currentUser: props.linking ? { uid: "signed-in-user" } : null };
+  const createdUser = { uid: "created-user", email: "new@example.com", emailVerified: false };
   const NewPasswordInput = ({ label, value, onChange }) =>
     require("react").createElement(
       "label",
@@ -54,19 +64,49 @@ function setup({ methods = [], lookupError, policyError, props = {} } = {}) {
     },
     signInWithPhoneNumber: async (_auth, phone) => {
       calls.push(["sms", phone]);
-      return { verificationId: "test" };
+      return { verificationId: "test", confirm: async () => ({ user: createdUser }) };
+    },
+    linkWithPhoneNumber: async (user, number) => {
+      calls.push(["linkSms", user.uid, number]);
+      if (phoneSendError) throw { code: phoneSendError };
+      return {
+        verificationId: "test",
+        confirm: async (code) => {
+          calls.push(["confirmLink", code]);
+          if (phoneConfirmError) throw { code: phoneConfirmError };
+          return { user };
+        },
+      };
     },
     isSignInWithEmailLink: () => false,
     fetchSignInMethodsForEmail: async (_auth, email) => {
       calls.push(["lookup", email]);
       if (lookupError) throw { code: lookupError };
-      return methods;
+      return typeof methods === "function" ? methods(email) : methods;
     },
-    createUserWithEmailAndPassword: async (_auth, email, password) =>
-      calls.push(["create", email, password]),
+    createUserWithEmailAndPassword: async (_auth, email, password) => {
+      assert.equal(_auth, props.auth || authInstance);
+      calls.push(["create", email, password]);
+      createdUser.email = email;
+      return { user: createdUser };
+    },
+    sendEmailVerification: async (user) => {
+      calls.push(["verifyEmail", user.uid]);
+      if (verificationError) throw { code: verificationError };
+    },
+    reload: async () => {},
+    EmailAuthProvider: { credential: (email, password) => ({ email, password }) },
+    linkWithCredential: async (user, credential) => {
+      calls.push(["link", user.uid, credential.email]);
+      if (emailLinkError) throw { code: emailLinkError };
+      user.email = credential.email;
+      user.emailVerified = false;
+      return { user };
+    },
     signInWithEmailAndPassword: async (_auth, email, password) =>
       calls.push(["signIn", email, password]),
   };
+  const verification = loadComponent("auth/EmailVerification", { "firebase/auth": auth });
 
   const componentExports = loadComponent(
     "auth/Login",
@@ -79,6 +119,7 @@ function setup({ methods = [], lookupError, policyError, props = {} } = {}) {
       if (name === "../../utils/phone") return phone;
       if (name === "../../utils/storage") return {};
       if (name === "./NewPasswordInput") return { default: NewPasswordInput };
+      if (name === "./EmailVerification") return verification;
       if (name === "../../utils/passwordPolicy")
         return {
           validateNewPassword: async (_auth, password) => {
@@ -105,6 +146,26 @@ function setup({ methods = [], lookupError, policyError, props = {} } = {}) {
     policyChecks,
     captchaCalls,
     authInstance,
+    authError: componentExports.authError,
+    submitDisabled: () =>
+      find(render(), (element) => element.props?.className === "dashboard-primary-button").props
+        .disabled,
+    async click(label) {
+      const button = find(
+        render(),
+        (element) => element.type === "button" && element.props.children === label,
+      );
+      assert.ok(button, label);
+      await button.props.onClick();
+      await new Promise((resolve) => setImmediate(resolve));
+    },
+    buttonDisabled: (label) =>
+      find(render(), (element) => element.type === "button" && element.props.children === label)
+        .props.disabled,
+    verificationHtml: () =>
+      renderToStaticMarkup(
+        require("react").createElement(verification.default, { user: createdUser }),
+      ),
     attachCaptcha() {
       find(render(), (element) => element.props?.className === "dashboard-captcha").ref.current =
         {};
@@ -144,13 +205,71 @@ test("a new email is looked up and opens password creation without registering p
   await form.submit();
   assert.deepEqual(form.calls, [["lookup", "new@example.com"]]);
   assert.match(form.html(), /Create Your Account/);
-  assert.match(form.html(), /Create a password/);
+  assert.match(form.html(), /Create A Password/);
   assert.match(form.html(), /autocomplete="new-password"/i);
   assert.match(form.html(), /value="new@example.com"/);
   assert.equal((form.html().match(/<form/g) || []).length, 1);
   form.change("new-password");
   await form.submit();
   assert.deepEqual(form.calls[1], ["create", "new@example.com", "new-password"]);
+  assert.deepEqual(form.calls[2], ["verifyEmail", "created-user"]);
+  assert.match(form.verificationHtml(), /Verification email sent/);
+});
+
+test("email-delivery failure preserves the created account and passes control to setup with a retry", async () => {
+  const authenticated = [];
+  const form = setup({
+    verificationError: "auth/network-request-failed",
+    props: { onAuthenticated: async (user) => authenticated.push(user.uid) },
+  });
+  form.change("new@example.com");
+  await form.submit();
+  form.change("new-password");
+  await form.submit();
+  assert.deepEqual(authenticated, ["created-user"]);
+  assert.equal(form.calls.filter(([action]) => action === "create").length, 1);
+  assert.match(form.verificationHtml(), /role="alert"/);
+  assert.match(form.verificationHtml(), /Unable to send the verification email/);
+  assert.match(form.verificationHtml(), /Resend Verification Email/);
+});
+
+test("adding an email/password to a phone account sends its verification automatically", async () => {
+  let linked = 0;
+  const form = setup({
+    props: { linking: true, contactType: "email", onLinked: () => linked++ },
+  });
+  form.authInstance.currentUser = { uid: "phone-account", email: null, emailVerified: false };
+  form.change("member@example.com");
+  await form.submit();
+  form.change("new-password");
+  await form.submit();
+  assert.deepEqual(form.calls, [
+    ["lookup", "member@example.com"],
+    ["link", "phone-account", "member@example.com"],
+    ["verifyEmail", "phone-account"],
+  ]);
+  assert.equal(linked, 1);
+});
+
+test("secondary contact creation verifies the new email identity rather than the main signed-in user", async () => {
+  const authenticated = [];
+  const form = setup({
+    props: {
+      auth: { currentUser: null },
+      onAuthenticated: async (user) => authenticated.push(user.uid),
+    },
+  });
+  form.authInstance.currentUser = { uid: "primary-phone-user", email: null };
+  form.change("secondary@example.com");
+  await form.submit();
+  form.change("new-password");
+  await form.submit();
+  assert.deepEqual(form.calls, [
+    ["lookup", "secondary@example.com"],
+    ["create", "secondary@example.com", "new-password"],
+    ["verifyEmail", "created-user"],
+  ]);
+  assert.deepEqual(authenticated, ["created-user"]);
 });
 
 test("phone verification uses the updated SDK's Auth-first reCAPTCHA constructor", async () => {
@@ -204,7 +323,7 @@ test("an existing email opens sign-in and keeps the existing account", async () 
   const form = setup({ methods: ["password"] });
   form.change("existing@example.com");
   await form.submit();
-  assert.doesNotMatch(form.html(), /Create a password|Create Your Account/);
+  assert.doesNotMatch(form.html(), /Create A Password|Create Your Account/);
   assert.match(form.html(), /autocomplete="current-password"/i);
   form.change("existing-password");
   await form.submit();
@@ -232,10 +351,157 @@ test("a failed lookup stays on email entry and never creates an account", async 
   assert.equal(form.calls.length, 1);
 });
 
-test("profile contact linking does not use public email-existence lookup", async () => {
+test("profile email linking checks availability before collecting a new password", async () => {
   const form = setup({ props: { linking: true, contactType: "email", embedded: true } });
   form.change("member@example.com");
   await form.submit();
-  assert.equal(form.calls.length, 0);
+  assert.deepEqual(form.calls, [["lookup", "member@example.com"]]);
   assert.match(form.html(), /type="password"/);
+});
+
+test("invalid email and phone identifiers disable submission and never reach Firebase", async () => {
+  for (const [contactType, invalid, valid] of [
+    ["email", "member@example..com", "member@example.com"],
+    ["phone", "905 555", "+19055550123"],
+  ]) {
+    const form = setup({ props: { linking: true, contactType } });
+    assert.equal(form.submitDisabled(), true);
+    form.change(invalid);
+    assert.equal(form.submitDisabled(), true);
+    await form.submit();
+    await form.blur();
+    assert.deepEqual(form.calls, []);
+    assert.match(form.html(), /role="alert"/);
+    form.change(valid);
+    assert.equal(form.submitDisabled(), false);
+  }
+});
+
+test("existing email addresses are blocked before collecting credentials and remain blocked across case changes", async () => {
+  const form = setup({
+    methods: (email) => (email.toLowerCase() === "taken@example.com" ? ["password"] : []),
+    props: { linking: true, contactType: "email" },
+  });
+  form.change("taken@example.com");
+  await form.blur();
+  assert.match(form.html(), /email address already belongs to another account/);
+  assert.doesNotMatch(form.html(), /type="password"/);
+  assert.equal(form.submitDisabled(), true);
+  await form.submit();
+  form.changeIdentifier("TAKEN@example.com");
+  await form.blur();
+  assert.equal(form.submitDisabled(), true);
+  assert.deepEqual(form.calls, [["lookup", "taken@example.com"]]);
+  form.changeIdentifier("available@example.com");
+  assert.equal(form.submitDisabled(), false);
+  await form.submit();
+  assert.match(form.html(), /Create A Password/);
+  assert.equal(form.submitDisabled(), true);
+  form.change("new-password");
+  assert.equal(form.submitDisabled(), false);
+});
+
+test("an email becoming unavailable between lookup and save disables retries without linking it", async () => {
+  const form = setup({
+    emailLinkError: "auth/email-already-in-use",
+    props: { linking: true, contactType: "email" },
+  });
+  form.change("taken@example.com");
+  await form.submit();
+  form.change("new-password");
+  await form.submit();
+  assert.match(form.html(), /email address already belongs to another account/);
+  assert.doesNotMatch(form.html(), /auth\/email-already-in-use/);
+  assert.equal(form.submitDisabled(), true);
+  await form.submit();
+  assert.equal(form.calls.filter(([action]) => action === "link").length, 1);
+  assert.ok(!form.calls.some(([action]) => action === "verifyEmail"));
+});
+
+for (const conflict of [
+  "auth/account-exists-with-different-credential",
+  "auth/credential-already-in-use",
+  "auth/phone-number-already-exists",
+])
+  test(`SMS account conflicts disable Save and resend until the phone is changed: ${conflict}`, async () => {
+    const form = setup({
+      phoneConfirmError: conflict,
+      props: { linking: true, contactType: "phone" },
+    });
+    form.change("(905) 555-0123");
+    form.attachCaptcha();
+    await form.submit();
+    assert.match(form.html(), /Verify and Save Phone/);
+    assert.doesNotMatch(form.html(), /Verify And Save Phone/);
+    assert.equal(form.submitDisabled(), true);
+    form.change("12345");
+    assert.equal(form.submitDisabled(), true);
+    await form.submit();
+    assert.equal(form.calls.length, 1);
+    form.change("123456");
+    assert.equal(form.submitDisabled(), false);
+    await form.submit();
+    assert.match(form.html(), /phone number already belongs to another account/);
+    assert.doesNotMatch(form.html(), /auth\/account-exists|auth\/credential-already/);
+    assert.equal(form.submitDisabled(), true);
+    assert.equal(form.buttonDisabled("Send Another Code"), true);
+    await form.submit();
+    await form.click("Send Another Code");
+    assert.equal(form.calls.length, 2);
+    await form.click("Change Phone Number");
+    form.change("9055550123");
+    assert.equal(form.submitDisabled(), true, "formatting cannot bypass a confirmed duplicate");
+    form.change("9055550124");
+    assert.equal(form.submitDisabled(), false);
+    await form.submit();
+    assert.deepEqual(form.calls.at(-1), ["linkSms", "signed-in-user", "+19055550124"]);
+  });
+
+for (const failure of ["auth/code-expired", "auth/invalid-verification-code"])
+  test(`code errors allow recovery without misreporting an account conflict: ${failure}`, async () => {
+    const form = setup({
+      phoneConfirmError: failure,
+      props: { linking: true, contactType: "phone" },
+    });
+    form.change("9055550123");
+    form.attachCaptcha();
+    await form.submit();
+    form.change("123456");
+    await form.submit();
+    assert.equal(form.submitDisabled(), true);
+    assert.doesNotMatch(form.html(), /belongs to another account/);
+    assert.equal(form.buttonDisabled("Send Another Code"), false);
+    if (failure === "auth/code-expired") await form.click("Send Another Code");
+    form.change("654321");
+    assert.equal(form.submitDisabled(), false);
+  });
+
+test("late email availability results cannot block a corrected address", async () => {
+  let finish;
+  const delayed = new Promise((resolve) => (finish = resolve));
+  const form = setup({
+    methods: (email) => (email === "old@example.com" ? delayed : []),
+    props: { linking: true, contactType: "email" },
+  });
+  form.change("old@example.com");
+  const pending = form.submit();
+  form.changeIdentifier("corrected@example.com");
+  finish(["password"]);
+  await pending;
+  assert.match(form.html(), /value="corrected@example.com"/);
+  assert.doesNotMatch(form.html(), /belongs to another account|type="password"/);
+  assert.equal(form.submitDisabled(), false);
+  await form.submit();
+  assert.match(form.html(), /Create A Password/);
+});
+
+test("losing the signed-in session cannot turn contact linking into a new sign-in", async () => {
+  const form = setup({ props: { linking: true, contactType: "phone" } });
+  form.authInstance.currentUser = null;
+  form.change("9055550123");
+  form.attachCaptcha();
+  assert.equal(form.submitDisabled(), true);
+  await form.submit();
+  assert.deepEqual(form.calls, []);
+  assert.match(form.html(), /Sign in again before adding contact details/);
 });
